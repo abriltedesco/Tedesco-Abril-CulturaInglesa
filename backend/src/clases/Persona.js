@@ -1,0 +1,12 @@
+class Persona {
+    constructor(id, nombre, apellido, email, telefono) {
+        this.id = id;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.email = email;
+        this.telefono = telefono;
+    }
+
+}
+
+export default Persona;
