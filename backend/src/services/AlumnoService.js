@@ -1,7 +1,7 @@
 import alumnoRepository from '../repositories/AlumnoRepository.js';
 import Alumno from '../models/Alumno.js';
 import { BadRequestError, NotFoundError, ConflictError } from '../exceptions/AppError.js';
-import { Messages } from '../enums/Messages.js';
+import { Messages } from '../enums/Mensajes.js';
 import { generarId } from '../utils/generadorId.js';
 
 class AlumnoService {

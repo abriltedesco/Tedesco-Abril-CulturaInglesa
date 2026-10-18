@@ -1,7 +1,10 @@
 import { Router } from 'express';
 import alumnoController from '../controllers/AlumnoController.js';
+import { requireAdmin } from '../middlewares/requireAdmin.js';
 
 const router = Router();
+
+router.use(requireAdmin);
 
 router.get('/', alumnoController.getAll);
 router.get('/:id', alumnoController.getById);

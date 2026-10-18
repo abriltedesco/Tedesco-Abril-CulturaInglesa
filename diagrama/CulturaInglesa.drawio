@@ -246,4 +246,27 @@
             </root>
         </mxGraphModel>
     </diagram>
+    <diagram name="Sistema de Gestión Escolar" id="sistema-gestion-escolar">
+        <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0b"/><mxCell id="1b" parent="0b"/>
+                <mxCell id="roles" value="Roles y autenticación&#xa;ADMIN / RECEPCIÓN: acceso total&#xa;PROFESOR: cursos asignados, notas, asistencia, anuncios&#xa;ALUMNO: portal, cursos, notas, pagos, inscripciones" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1" vertex="1" parent="1b"><mxGeometry x="40" y="40" width="330" height="150" as="geometry"/></mxCell>
+                <mxCell id="usuario" value="Usuario&#xa;id, email único, password, rol, dni único&#xa;Registro de alumno/profesor: password inicial = email&#xa;Cambio de password posterior" style="swimlane;startSize=26;fillColor=#e1d5e7;strokeColor=#9673a6" vertex="1" parent="1b"><mxGeometry x="430" y="40" width="280" height="145" as="geometry"/></mxCell>
+                <mxCell id="alumno2" value="Alumno&#xa;nombre, apellido, DOB, contacto emergencia&#xa;Validación: email, DNI numérico, edad mínima 4" style="swimlane;startSize=26;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1b"><mxGeometry x="40" y="260" width="300" height="125" as="geometry"/></mxCell>
+                <mxCell id="profesor2" value="Profesor&#xa;especialidad&#xa;No puede tener cursos con horarios superpuestos" style="swimlane;startSize=26;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1b"><mxGeometry x="430" y="260" width="280" height="115" as="geometry"/></mxCell>
+                <mxCell id="curso2" value="Curso&#xa;nombre, nivel, capacidad máxima, horario&#xa;profesor asignado, prerrequisito" style="swimlane;startSize=26;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1b"><mxGeometry x="820" y="40" width="300" height="125" as="geometry"/></mxCell>
+                <mxCell id="inscripcion2" value="Inscripción&#xa;alumno, curso, fecha, estado&#xa;PENDIENTE · CONFIRMADA · EN_CURSO&#xa;FINALIZADA · CANCELADA" style="swimlane;startSize=26;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1b"><mxGeometry x="820" y="260" width="300" height="145" as="geometry"/></mxCell>
+                <mxCell id="academico" value="Seguimiento académico&#xa;Calificación: solo ADMIN/PROFESOR&#xa;Asistencia: profesor del curso o ADMIN&#xa;Historial académico y anuncios" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1b"><mxGeometry x="40" y="480" width="330" height="125" as="geometry"/></mxCell>
+                <mxCell id="pago2" value="Pago&#xa;estado: PENDIENTE / PAGADO / VENCIDO&#xa;PENDIENTE → CONFIRMADA al pagar" style="swimlane;startSize=26;fillColor=#f5f5f5;strokeColor=#666666" vertex="1" parent="1b"><mxGeometry x="430" y="480" width="280" height="110" as="geometry"/></mxCell>
+                <mxCell id="reglas" value="Reglas de negocio&#xa;• No superar capacidad del curso&#xa;• Exigir aprobación del nivel anterior&#xa;• Email y DNI únicos&#xa;• Email válido y DNI solo numérico&#xa;• Nombre, apellido, DOB y emergencia obligatorios&#xa;• Estados de inscripción controlan pagos, cursada y bajas" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1b"><mxGeometry x="820" y="480" width="360" height="170" as="geometry"/></mxCell>
+                <mxCell id="r1" value="1" style="endArrow=none;html=1" edge="1" parent="1b" source="usuario" target="alumno2"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="r2" value="1" style="endArrow=none;html=1" edge="1" parent="1b" source="usuario" target="profesor2"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="r3" value="asigna" style="endArrow=none;html=1" edge="1" parent="1b" source="profesor2" target="curso2"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="r4" value="solicita" style="endArrow=none;html=1" edge="1" parent="1b" source="alumno2" target="inscripcion2"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="r5" value="contiene" style="endArrow=none;html=1" edge="1" parent="1b" source="curso2" target="inscripcion2"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="r6" value="genera" style="endArrow=none;html=1" edge="1" parent="1b" source="inscripcion2" target="pago2"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="r7" value="registra" style="endArrow=none;html=1" edge="1" parent="1b" source="inscripcion2" target="academico"><mxGeometry relative="1" as="geometry"/></mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
 </mxfile>
