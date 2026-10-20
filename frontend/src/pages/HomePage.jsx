@@ -21,32 +21,21 @@ export const HomePage = ({ onOpenLogin }) => {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Navbar */}
       <Navbar onOpenLogin={onOpenLogin} />
 
-      {/* Main Content Sections */}
       <main style={{ flexGrow: 1 }}>
         <Hero />
-        
         <Cursos />
-        
         <DividerBanner text="Tu futuro profesional también se habla en inglés" />
-        
-        <SobreNosotros />
-        
-        <DividerBanner text="El futuro no se espera, se prepara" />
-        
-        <PreguntasFrecuentes />
-        
+        <SobreNosotros />        
+        <DividerBanner text="El futuro no se espera, se prepara" />        
+        <PreguntasFrecuentes />        
         <DividerBanner text="Dominar el inglés ya no es un simple “extra” en el currículum, sino una herramienta indispensable para abrir puertas y crear verdaderas oportunidades, tanto a nivel personal como profesional." />
-        
         <Contacto showToast={showToast} />
       </main>
 
-      {/* Footer */}
       <Footer />
-
-      {/* Global Toast Notification System */}
+      
       <NotificationToast toast={toast} onClose={() => setToast(null)} />
     </div>
   );
