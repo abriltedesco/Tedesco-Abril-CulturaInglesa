@@ -21,7 +21,6 @@ export const GestionAlumnosModal = ({ isOpen, onClose, showToast }) => {
     dni: '',
     telefono: '',
     fechaNacimiento: '2005-01-01',
-    contactoEmergencia: '',
     nivel: 'Niños',
   });
   const [errors, setErrors] = useState({});
@@ -70,7 +69,6 @@ export const GestionAlumnosModal = ({ isOpen, onClose, showToast }) => {
       dni: '',
       telefono: '',
       fechaNacimiento: '2005-01-01',
-      contactoEmergencia: '',
       nivel: 'Niños',
     });
     setErrors({});
@@ -86,7 +84,6 @@ export const GestionAlumnosModal = ({ isOpen, onClose, showToast }) => {
       dni: alumno.dni || '',
       telefono: alumno.telefono || '',
       fechaNacimiento: alumno.fechaNacimiento ? alumno.fechaNacimiento.split('T')[0] : '2005-01-01',
-      contactoEmergencia: alumno.contactoEmergencia || '',
       nivel: alumno.nivel || 'Niños',
     });
     setErrors({});
@@ -105,7 +102,6 @@ export const GestionAlumnosModal = ({ isOpen, onClose, showToast }) => {
     if (apellidoErr) newErrors.apellido = apellidoErr;
     if (emailErr) newErrors.email = emailErr;
     if (!formData.dni || !/^\d+$/.test(formData.dni)) newErrors.dni = 'El DNI debe contener únicamente números.';
-    if (userType === 'ALUMNO' && !formData.contactoEmergencia) newErrors.contactoEmergencia = 'El contacto de emergencia es obligatorio.';
     if (telefonoErr) newErrors.telefono = telefonoErr;
 
     if (Object.keys(newErrors).length > 0) {
@@ -321,11 +317,6 @@ export const GestionAlumnosModal = ({ isOpen, onClose, showToast }) => {
                     <div>
                       <label htmlFor="fechaNacimiento" style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#273C2C', marginBottom: '4px' }}>Fecha de nacimiento *</label>
                       <input id="fechaNacimiento" name="fechaNacimiento" type="date" value={formData.fechaNacimiento} onChange={handleInputChange} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #273C2C', fontSize: '0.9rem' }} />
-                    </div>
-                    <div>
-                      <label htmlFor="contactoEmergencia" style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#273C2C', marginBottom: '4px' }}>Contacto de emergencia *</label>
-                      <input id="contactoEmergencia" name="contactoEmergencia" type="text" value={formData.contactoEmergencia} onChange={handleInputChange} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: errors.contactoEmergencia ? '2px solid #D32F2F' : '1px solid #273C2C', fontSize: '0.9rem' }} />
-                      {errors.contactoEmergencia && <span style={{ color: '#D32F2F', fontSize: '0.78rem' }}>{errors.contactoEmergencia}</span>}
                     </div>
                   </>
                 )}

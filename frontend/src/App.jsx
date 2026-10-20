@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
 import { AdminPage } from './pages/AdminPage';
+import { PortalPage } from './pages/PortalPage';
 import { authService } from './services/authService';
 import './styles/global.css';
 
@@ -24,13 +25,18 @@ export function App() {
     goTo('');
   };
 
-  if (route === '#login') return <LoginPage onLogin={() => goTo('gestor-alumnos')} onBack={() => goTo('')} />;
+  if (route === '#login') return <LoginPage onLogin={(user) => goTo(user.rol === 'ADMIN' ? 'gestor-alumnos' : 'portal')} onBack={() => goTo('')} />;
   if (route === '#gestor-alumnos') {
     const user = JSON.parse(sessionStorage.getItem('authUser') || 'null');
     if (!user || user.rol !== 'ADMIN' || !sessionStorage.getItem('authToken')) {
-      return <LoginPage onLogin={() => goTo('gestor-alumnos')} onBack={() => goTo('')} />;
+      return <LoginPage onLogin={(user) => goTo(user.rol === 'ADMIN' ? 'gestor-alumnos' : 'portal')} onBack={() => goTo('')} />;
     }
-    return <AdminPage showToast={showToast} onClose={() => goTo('')} onLogout={handleLogout} />;
+    return <AdminPage showToast={showToast} onLogout={handleLogout} />;
+  }
+  if (route === '#portal') {
+    const user = JSON.parse(sessionStorage.getItem('authUser') || 'null');
+    if (!user || !sessionStorage.getItem('authToken') || user.rol === 'ADMIN') return <LoginPage onLogin={(loggedUser) => goTo(loggedUser.rol === 'ADMIN' ? 'gestor-alumnos' : 'portal')} onBack={() => goTo('')} />;
+    return <PortalPage user={user} onLogout={handleLogout} />;
   }
   return <HomePage onOpenLogin={() => goTo('login')} />;
 }

@@ -10,15 +10,44 @@ const getEnrollment = (enrollmentId) => academy.inscripciones.find((item) => ite
 
 class AcademyService {
     registerUser(data, rol) {
-        const { nombre, apellido, email, dni, fechaNacimiento, contactoEmergencia } = data;
-        if (!nombre || !apellido || !email || !dni || (rol === 'ALUMNO' && (!fechaNacimiento || !contactoEmergencia))) throw new BadRequestError('Faltan datos obligatorios del usuario.');
+        const { nombre, apellido, email, dni, fechaNacimiento, cursoId } = data;
+        if (!nombre || !apellido || !email || !dni || (rol === 'ALUMNO' && !fechaNacimiento)) throw new BadRequestError('Faltan datos obligatorios del usuario.');
+        if (!cursoId) throw new BadRequestError('Debe seleccionar un curso.');
+        const course = getCourse(cursoId);
+        if (!course) throw new NotFoundError('El curso seleccionado no existe.');
         assertEmail(email); assertDni(dni);
         if (rol === 'ALUMNO') assertMinimumAge(fechaNacimiento);
         assertUnique(academy.users, 'email', email, 'El email ya está registrado.');
         assertUnique(academy.users, 'dni', dni, 'El DNI ya está registrado.');
-        const user = { id: id(), nombre, apellido, email, dni: String(dni), fechaNacimiento, contactoEmergencia, rol, password: email };
+        const user = { id: id(), nombre, apellido, email, dni: String(dni), fechaNacimiento, rol, password: email, estado: 'ACTIVO', estadoCobro: 'NO COBRADO' };
         academy.users.push(user);
+        if (rol === 'ALUMNO') this.enroll(user.id, course.id);
+        else this.assignTeacher(course.id, user.id);
         return { ...user, password: undefined };
+    }
+
+    updateUser(userId, data) {
+        const user = getUser(userId);
+        if (!user) throw new NotFoundError('Usuario no encontrado.');
+        const { nombre, apellido, email, dni, fechaNacimiento, telefono, cursoId } = data;
+        if (!nombre || !apellido || !email || !dni || !cursoId) throw new BadRequestError('Faltan datos obligatorios, incluido el curso.');
+        const course = getCourse(cursoId);
+        if (!course) throw new NotFoundError('El curso seleccionado no existe.');
+        if (academy.users.some((item) => item.id !== user.id && (item.email === email || item.dni === String(dni)))) throw new ConflictError('El email o DNI ya está registrado.');
+        Object.assign(user, { nombre, apellido, email, dni: String(dni), fechaNacimiento, telefono });
+        if (user.rol === 'ALUMNO') {
+            const current = academy.inscripciones.find((item) => item.alumnoId === user.id && item.estado !== EstadoInscripcion.CANCELADA);
+            if (!current || current.cursoId !== course.id) {
+                if (current) current.estado = EstadoInscripcion.CANCELADA;
+                this.enroll(user.id, course.id);
+            }
+        } else {
+            const current = academy.cursos.find((item) => item.teacherId === user.id);
+            if (current && current.id !== course.id) current.teacherId = undefined;
+            this.assignTeacher(course.id, user.id);
+        }
+        const { password, ...safeUser } = user;
+        return safeUser;
     }
 
     changePassword(userId, currentPassword, newPassword) {
@@ -54,12 +83,12 @@ class AcademyService {
         academy.inscripciones.push(enrollment); return enrollment;
     }
 
-    recordGrade(enrollmentId, teacher, value, period) {
+    recordGrade(enrollmentId, teacher, value, period, metadata = {}) {
         const enrollment = getEnrollment(enrollmentId); const course = enrollment && getCourse(enrollment.cursoId);
         if (!enrollment || !course) throw new NotFoundError('Inscripción no encontrada.');
         if (teacher.rol !== 'ADMIN' && course.teacherId !== teacher.id) throw new BadRequestError('El profesor no está asignado a este curso.');
         if (typeof value !== 'number' || value < 0 || value > 10) throw new BadRequestError('La calificación debe estar entre 0 y 10.');
-        const grade = new Calificacion(id(), enrollment.id, teacher.id, value, period); academy.calificaciones.push(grade); return grade;
+        const grade = new Calificacion(id(), enrollment.id, teacher.id, value, period, metadata); academy.calificaciones.push(grade); return grade;
     }
 
     recordAttendance(enrollmentId, teacher, date, present) {

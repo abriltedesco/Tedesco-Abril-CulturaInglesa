@@ -7,6 +7,7 @@ const router = Router();
 router.use(requireAuth);
 router.post('/students', requireRoles('ADMIN'), controller.registerStudent);
 router.post('/teachers', requireRoles('ADMIN'), controller.registerTeacher);
+router.patch('/users/:userId', requireRoles('ADMIN'), controller.updateUser);
 router.patch('/password', controller.changePassword);
 router.post('/courses', requireRoles('ADMIN'), controller.createCourse);
 router.patch('/courses/:courseId/teacher', requireRoles('ADMIN'), controller.assignTeacher);

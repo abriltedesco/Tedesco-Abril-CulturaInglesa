@@ -18,7 +18,7 @@ class AuthController {
 
         const token = crypto.randomUUID();
         sessions.set(token, { id: user.id, email: user.email, rol: user.rol });
-        return successResponse(res, { token, user: { id: user.id, email: user.email, rol: user.rol } });
+        return successResponse(res, { token, user: { id: user.id, email: user.email, nombre: user.nombre, apellido: user.apellido, rol: user.rol } });
     };
 
     logout = (req, res) => {
