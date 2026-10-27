@@ -118,3 +118,24 @@ img {
   white-space: nowrap;
   border-width: 0;
 }
+
+/* Responsive Table & Card Views (Mobile-First) */
+.desktop-table-view {
+  display: block;
+}
+
+.mobile-cards-view {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-table-view {
+    display: none !important;
+  }
+  .mobile-cards-view {
+    display: flex !important;
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+

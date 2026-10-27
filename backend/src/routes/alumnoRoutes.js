@@ -4,12 +4,13 @@ import { requireAdmin } from '../middlewares/requireAdmin.js';
 
 const router = Router();
 
-router.use(requireAdmin);
-
-router.get('/', alumnoController.getAll);
-router.get('/:id', alumnoController.getById);
+// Endpoint de creación público (para formulario de contacto/inscripción)
 router.post('/', alumnoController.create);
-router.put('/:id', alumnoController.update);
-router.delete('/:id', alumnoController.remove);
+
+// Endpoints administrativos protegidos
+router.get('/', requireAdmin, alumnoController.getAll);
+router.get('/:id', requireAdmin, alumnoController.getById);
+router.put('/:id', requireAdmin, alumnoController.update);
+router.delete('/:id', requireAdmin, alumnoController.remove);
 
 export default router;

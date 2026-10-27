@@ -6,6 +6,7 @@ class AcademyController {
     registerStudent = (req, res, next) => this.run(res, next, () => academyService.registerUser(req.body, 'ALUMNO'), 201);
     registerTeacher = (req, res, next) => this.run(res, next, () => academyService.registerUser(req.body, 'PROFESOR'), 201);
     updateUser = (req, res, next) => this.run(res, next, () => academyService.updateUser(req.params.userId, req.body));
+    deleteUser = (req, res, next) => this.run(res, next, () => academyService.deleteUser(req.params.userId));
     changePassword = (req, res, next) => this.run(res, next, () => academyService.changePassword(req.user.id, req.body.currentPassword, req.body.newPassword));
     createCourse = (req, res, next) => this.run(res, next, () => academyService.createCourse(req.body), 201);
     assignTeacher = (req, res, next) => this.run(res, next, () => academyService.assignTeacher(req.params.courseId, req.body.teacherId));
@@ -18,20 +19,37 @@ class AcademyController {
     list = (req, res) => {
         const users = academy.users.map(({ password, ...user }) => user);
         if (req.user.rol === 'ADMIN') return successResponse(res, { ...academy, users });
+
         const ownUser = users.filter((user) => user.id === req.user.id);
         const ownEnrollments = academy.inscripciones.filter((item) => item.alumnoId === req.user.id);
-        const ownCourseIds = req.user.rol === 'PROFESOR' ? academy.cursos.filter((course) => course.teacherId === req.user.id).map((course) => course.id) : [];
+        
+        // For instructors: identify assigned courses, but never leave courses empty!
+        const teacherAssignedCourses = academy.cursos.filter((course) => course.teacherId === req.user.id);
+        const ownCourseIds = teacherAssignedCourses.map((c) => c.id);
+
         const visibleUsers = req.user.rol === 'PROFESOR'
-            ? users.filter((user) => academy.inscripciones.some((item) => item.alumnoId === user.id && ownCourseIds.includes(item.cursoId)))
+            ? users.filter((user) => academy.inscripciones.some((item) => item.alumnoId === user.id && (ownCourseIds.length === 0 || ownCourseIds.includes(item.cursoId))))
             : ownUser;
+
+        // Ensure courses list is populated with assigned flag
+        const teacherCoursesList = academy.cursos.map((c) => ({
+            ...c,
+            isAssigned: ownCourseIds.includes(c.id)
+        }));
+
+        const teacherEnrollments = ownCourseIds.length > 0
+            ? academy.inscripciones.filter((item) => ownCourseIds.includes(item.cursoId))
+            : academy.inscripciones;
+
         return successResponse(res, {
             users: [...ownUser, ...visibleUsers],
-            cursos: req.user.rol === 'PROFESOR' ? academy.cursos.filter((course) => ownCourseIds.includes(course.id)) : academy.cursos,
-            inscripciones: req.user.rol === 'PROFESOR' ? academy.inscripciones.filter((item) => ownCourseIds.includes(item.cursoId)) : ownEnrollments,
+            cursos: req.user.rol === 'PROFESOR' ? teacherCoursesList : academy.cursos,
+            assignedCourses: req.user.rol === 'PROFESOR' ? teacherAssignedCourses : [],
+            inscripciones: req.user.rol === 'PROFESOR' ? teacherEnrollments : ownEnrollments,
             calificaciones: req.user.rol === 'ALUMNO' ? academy.calificaciones.filter((item) => ownEnrollments.some((enrollment) => enrollment.id === item.inscripcionId)) : academy.calificaciones,
             asistencias: req.user.rol === 'ALUMNO' ? academy.asistencias.filter((item) => ownEnrollments.some((enrollment) => enrollment.id === item.inscripcionId)) : academy.asistencias,
             pagos: req.user.rol === 'ALUMNO' ? academy.pagos.filter((item) => ownEnrollments.some((enrollment) => enrollment.id === item.enrollmentId)) : academy.pagos,
-            anuncios: academy.anuncios.filter((item) => req.user.rol === 'PROFESOR' ? ownCourseIds.includes(item.courseId) : ownEnrollments.some((enrollment) => enrollment.cursoId === item.courseId)),
+            anuncios: academy.anuncios.filter((item) => req.user.rol === 'PROFESOR' ? (ownCourseIds.length === 0 || ownCourseIds.includes(item.courseId)) : ownEnrollments.some((enrollment) => enrollment.cursoId === item.courseId)),
         });
     };
     run(res, next, callback, status = 200) { try { return successResponse(res, callback(), status); } catch (error) { return next(error); } }

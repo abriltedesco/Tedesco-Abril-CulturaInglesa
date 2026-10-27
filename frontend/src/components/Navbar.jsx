@@ -56,7 +56,6 @@ export const Navbar = ({ onOpenLogin }) => {
               height: '42px',
               borderRadius: '6px',
               objectFit: 'cover',
-              border: '1px solid #273C2C',
             }}
           />
           <span

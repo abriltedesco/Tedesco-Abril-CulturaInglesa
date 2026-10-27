@@ -181,7 +181,7 @@ export const Contacto = ({ showToast }) => {
             >
               <iframe
                 title="Ubicación Cultural Inglesa de Oxford"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3284.8776654271816!2d-58.49757692348574!3d-34.58195897296245!2m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcb78206d0938f%3A0x6b40e34094a9a08e!2sAv.%20Salvador%20Mar%C3%ADa%20del%20Carril%202568%2C%20C1419%20CABA!5e0!3m2!1ses!2sar!4v1712790000000!5m2!1ses!2sar"
+                src="https://maps.google.com/maps?q=Av.+Salvador+Mar%C3%ADa+del+Carril+2568,+Villa+Pueyrred%C3%B3n,+Buenos+Aires&t=&z=16&ie=UTF8&iwloc=&output=embed"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}

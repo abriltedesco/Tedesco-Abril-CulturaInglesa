@@ -29,7 +29,6 @@ export const Footer = () => {
             width: '60px',
             height: '60px',
             borderRadius: '10px',
-            border: '1.5px solid #273C2C',
             objectFit: 'cover',
           }}
         />

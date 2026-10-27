@@ -1,0 +1,164 @@
+{
+  "state": {
+    "users": [
+      {
+        "id": 1,
+        "nombre": "Admin",
+        "apellido": "Cultura",
+        "email": "admin@culturainglesa.com",
+        "password": "admin123",
+        "rol": "ADMIN",
+        "dni": "00000000",
+        "telefono": "1161802607",
+        "estado": "ACTIVO"
+      },
+      {
+        "id": 8,
+        "nombre": "Valeria",
+        "apellido": "Gomez",
+        "email": "valeria.gomez@test.com",
+        "dni": "45123456",
+        "telefono": "1123456789",
+        "fechaNacimiento": "2014-03-20",
+        "rol": "ALUMNO",
+        "password": "valeria.gomez@test.com",
+        "estado": "ACTIVO",
+        "estadoCobro": "NO COBRADO"
+      },
+      {
+        "id": 10,
+        "nombre": "Mariana",
+        "apellido": "Fernandez",
+        "email": "mariana.profe@test.com",
+        "dni": "32123456",
+        "telefono": "1198765432",
+        "rol": "PROFESOR",
+        "password": "mariana.profe@test.com",
+        "estado": "ACTIVO",
+        "estadoCobro": "NO COBRADO"
+      },
+      {
+        "id": 11,
+        "nombre": "Kiara",
+        "apellido": "Gomez",
+        "email": "kiaragomez@gmail.com",
+        "dni": "12345956",
+        "telefono": "1167899291",
+        "fechaNacimiento": "1999-12-17",
+        "rol": "ALUMNO",
+        "password": "kiaragomez@gmail.com",
+        "estado": "ACTIVO",
+        "estadoCobro": "NO COBRADO"
+      }
+    ],
+    "cursos": [
+      {
+        "id": 2,
+        "name": "Inicial 1",
+        "level": "Inicial 1",
+        "minAge": 4,
+        "maxAge": 6,
+        "capacity": 30,
+        "schedule": "Martes y jueves 17:00 a 18:00",
+        "inscripciones": []
+      },
+      {
+        "id": 3,
+        "name": "Inicial 2",
+        "level": "Inicial 2",
+        "minAge": 7,
+        "maxAge": 10,
+        "capacity": 30,
+        "schedule": "Martes y jueves 17:00 a 18:00",
+        "inscripciones": []
+      },
+      {
+        "id": 4,
+        "name": "Adolescentes 1",
+        "level": "Adolescentes 1",
+        "minAge": 11,
+        "maxAge": 13,
+        "capacity": 30,
+        "schedule": "Lunes y miércoles 17:30 a 18:30",
+        "inscripciones": [],
+        "teacherId": 10
+      },
+      {
+        "id": 5,
+        "name": "Adolescentes 2",
+        "level": "Adolescentes 2",
+        "minAge": 14,
+        "maxAge": 17,
+        "capacity": 30,
+        "schedule": "Martes y jueves 18:00 a 19:00",
+        "inscripciones": []
+      },
+      {
+        "id": 6,
+        "name": "Adultos 1",
+        "level": "Adultos 1",
+        "minAge": 18,
+        "maxAge": 30,
+        "capacity": 30,
+        "schedule": "Lunes y miércoles 19:00 a 20:00",
+        "inscripciones": []
+      },
+      {
+        "id": 7,
+        "name": "Adultos 2",
+        "level": "Adultos 2",
+        "minAge": 31,
+        "maxAge": 99,
+        "capacity": 30,
+        "schedule": "Martes y jueves 19:00 a 20:00",
+        "inscripciones": []
+      }
+    ],
+    "inscripciones": [
+      {
+        "id": 9,
+        "alumnoId": 8,
+        "cursoId": 4,
+        "estado": "PENDIENTE",
+        "fecha": "2026-10-27T21:59:12.574Z",
+        "level": "Adolescentes 1"
+      },
+      {
+        "id": 12,
+        "alumnoId": 11,
+        "cursoId": 6,
+        "estado": "PENDIENTE",
+        "fecha": "2026-10-27T22:25:52.516Z",
+        "level": "Adultos 1"
+      }
+    ],
+    "calificaciones": [
+      {
+        "id": 13,
+        "inscripcionId": 9,
+        "teacherId": 10,
+        "value": 9,
+        "period": "Evaluación 1",
+        "name": "Evaluación 1",
+        "description": "Unit 1 & 2",
+        "date": "2026-10-27",
+        "createdAt": "2026-10-27T22:29:00.088Z"
+      },
+      {
+        "id": 14,
+        "inscripcionId": 9,
+        "teacherId": 10,
+        "value": 7,
+        "period": "Evaluación 2",
+        "name": "Evaluación 2",
+        "description": "fsdfds",
+        "date": "2026-09-09",
+        "createdAt": "2026-10-27T22:29:13.868Z"
+      }
+    ],
+    "asistencias": [],
+    "pagos": [],
+    "anuncios": []
+  },
+  "nextId": 15
+}

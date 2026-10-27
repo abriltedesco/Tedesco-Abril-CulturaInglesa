@@ -1,4 +1,38 @@
-const alumnos = [];
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const DATA_FILE = path.join(__dirname, '../data/alumnos.json');
+
+let alumnos = [];
+
+const loadAlumnos = () => {
+    try {
+        if (fs.existsSync(DATA_FILE)) {
+            const raw = fs.readFileSync(DATA_FILE, 'utf-8');
+            alumnos = JSON.parse(raw) || [];
+        }
+    } catch (e) {
+        console.error('Error cargando alumnos persistentes:', e);
+        alumnos = [];
+    }
+};
+
+const saveAlumnos = () => {
+    try {
+        const dir = path.dirname(DATA_FILE);
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+        fs.writeFileSync(DATA_FILE, JSON.stringify(alumnos, null, 2), 'utf-8');
+    } catch (e) {
+        console.error('Error guardando alumnos persistentes:', e);
+    }
+};
+
+loadAlumnos();
 
 class AlumnoRepository {
     findAll() {
@@ -15,6 +49,7 @@ class AlumnoRepository {
 
     create(alumno) {
         alumnos.push(alumno);
+        saveAlumnos();
         return alumno;
     }
 
@@ -24,6 +59,7 @@ class AlumnoRepository {
             return null;
         }
         alumnos[index] = { ...alumnos[index], ...data };
+        saveAlumnos();
         return alumnos[index];
     }
 
@@ -33,6 +69,7 @@ class AlumnoRepository {
             return false;
         }
         alumnos.splice(index, 1);
+        saveAlumnos();
         return true;
     }
 }
