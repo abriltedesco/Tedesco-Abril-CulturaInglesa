@@ -1,8 +1,5 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
-/**
- * Generic fetch wrapper to standardize API requests and error handling
- */
 export const request = async (endpoint, options = {}) => {
   const token = sessionStorage.getItem('authToken');
   const config = {

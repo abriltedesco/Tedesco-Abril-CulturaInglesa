@@ -72,20 +72,17 @@ img {
   display: block;
 }
 
-/* Accessibility focus outline */
 :focus-visible {
   outline: 3px solid var(--color-accent);
   outline-offset: 3px;
 }
 
-/* Container Utility */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1.5rem;
 }
 
-/* Utility Animations */
 @keyframes slideInRight {
   from {
     transform: translateX(100%);
@@ -106,7 +103,6 @@ img {
   animation: fadeIn 0.3s ease-out forwards;
 }
 
-/* Screen reader only helper */
 .sr-only {
   position: absolute;
   width: 1px;
