@@ -49,6 +49,32 @@
         "password": "kiaragomez@gmail.com",
         "estado": "ACTIVO",
         "estadoCobro": "NO COBRADO"
+      },
+      {
+        "id": 15,
+        "nombre": "Juan Martin",
+        "apellido": "Perez",
+        "email": "juanmaperez@yahoo.com",
+        "dni": "28272625",
+        "telefono": "+549115698490",
+        "fechaNacimiento": "1989-03-23",
+        "rol": "PROFESOR",
+        "password": "juanmaperez@yahoo.com",
+        "estado": "ACTIVO",
+        "estadoCobro": "NO COBRADO"
+      },
+      {
+        "id": 17,
+        "nombre": "Joaquina",
+        "apellido": "Martinez",
+        "email": "geraldineperez@yahoo.com",
+        "dni": "56123456",
+        "telefono": "1197647978",
+        "fechaNacimiento": "2018-11-24",
+        "rol": "ALUMNO",
+        "password": "geraldineperez@yahoo.com",
+        "estado": "ACTIVO",
+        "estadoCobro": "NO COBRADO"
       }
     ],
     "cursos": [
@@ -70,7 +96,8 @@
         "maxAge": 10,
         "capacity": 30,
         "schedule": "Martes y jueves 17:00 a 18:00",
-        "inscripciones": []
+        "inscripciones": [],
+        "teacherId": 15
       },
       {
         "id": 4,
@@ -130,6 +157,14 @@
         "estado": "PENDIENTE",
         "fecha": "2026-10-27T22:25:52.516Z",
         "level": "Adultos 1"
+      },
+      {
+        "id": 18,
+        "alumnoId": 17,
+        "cursoId": 3,
+        "estado": "PENDIENTE",
+        "fecha": "2026-11-03T17:34:46.656Z",
+        "level": "Inicial 2"
       }
     ],
     "calificaciones": [
@@ -154,11 +189,44 @@
         "description": "fsdfds",
         "date": "2026-09-09",
         "createdAt": "2026-10-27T22:29:13.868Z"
+      },
+      {
+        "id": 16,
+        "inscripcionId": 9,
+        "teacherId": 10,
+        "value": 8.5,
+        "period": "Evaluación 1",
+        "name": "Evaluación 1",
+        "description": "jfdlsjfdsl",
+        "date": "2026-11-03",
+        "createdAt": "2026-11-03T17:25:24.159Z"
+      },
+      {
+        "id": 19,
+        "inscripcionId": 18,
+        "teacherId": 15,
+        "value": 7,
+        "period": "Evaluación 1",
+        "name": "Evaluación 1",
+        "description": "",
+        "date": "2026-11-03",
+        "createdAt": "2026-11-03T17:35:51.195Z"
+      },
+      {
+        "id": 20,
+        "inscripcionId": 18,
+        "teacherId": 15,
+        "value": 9,
+        "period": "Evaluación 1",
+        "name": "Evaluación 1",
+        "description": "",
+        "date": "2026-09-23",
+        "createdAt": "2026-11-03T17:36:07.059Z"
       }
     ],
     "asistencias": [],
     "pagos": [],
     "anuncios": []
   },
-  "nextId": 15
+  "nextId": 21
 }

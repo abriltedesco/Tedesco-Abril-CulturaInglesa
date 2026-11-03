@@ -52,10 +52,11 @@ class AcademyService {
             }
         }
 
-        if (!cursoId) {
-            throw new BadRequestError('Debe seleccionar un curso.');
+        const effectiveCourseId = cursoId || (Array.isArray(data.cursoIds) ? data.cursoIds[0] : null);
+        if (!effectiveCourseId) {
+            throw new BadRequestError('Debe seleccionar al menos un curso.');
         }
-        const course = getCourse(cursoId);
+        const course = getCourse(effectiveCourseId);
         if (!course) throw new NotFoundError('El curso seleccionado no existe.');
 
         assertUnique(academy.users, 'email', email, 'El email ya está registrado.');
@@ -79,7 +80,15 @@ class AcademyService {
         if (rol === 'ALUMNO') {
             this.enroll(user.id, course.id);
         } else {
-            this.assignTeacher(course.id, user.id);
+            const courseIds = Array.isArray(data.cursoIds) && data.cursoIds.length > 0 
+                ? data.cursoIds.map(Number) 
+                : [course.id];
+            
+            courseIds.forEach((cid) => {
+                if (getCourse(cid)) {
+                    this.assignTeacher(cid, user.id);
+                }
+            });
         }
 
         saveState();
@@ -90,20 +99,22 @@ class AcademyService {
         const user = getUser(userId);
         if (!user) throw new NotFoundError('Usuario no encontrado.');
 
-        let { nombre, apellido, email, dni, fechaNacimiento, telefono, cursoId } = data;
+        let { nombre, apellido, email, dni, fechaNacimiento, telefono, cursoId, cursoIds } = data;
         nombre = String(nombre || '').trim();
         apellido = String(apellido || '').trim();
         email = String(email || '').trim().toLowerCase();
         dni = String(dni || '').replace(/\D/g, '');
         telefono = String(telefono || '').trim();
 
-        if (!nombre || !apellido || !email || !dni || !cursoId) {
+        const hasCourses = cursoId || (Array.isArray(cursoIds) && cursoIds.length > 0);
+        if (!nombre || !apellido || !email || !dni || !hasCourses) {
             throw new BadRequestError('Faltan datos obligatorios, incluido el curso.');
         }
         assertEmail(email);
         assertDni(dni);
 
-        const course = getCourse(cursoId);
+        const primaryCourseId = cursoId || (Array.isArray(cursoIds) ? cursoIds[0] : null);
+        const course = getCourse(primaryCourseId);
         if (!course) throw new NotFoundError('El curso seleccionado no existe.');
 
         if (academy.users.some((item) => item.id !== user.id && (item.email === email || item.dni === String(dni)))) {
@@ -119,9 +130,22 @@ class AcademyService {
                 this.enroll(user.id, course.id);
             }
         } else {
-            const current = academy.cursos.find((item) => item.teacherId === user.id);
-            if (current && current.id !== course.id) current.teacherId = undefined;
-            this.assignTeacher(course.id, user.id);
+            const targetCourseIds = Array.isArray(cursoIds) && cursoIds.length > 0
+                ? cursoIds.map(Number)
+                : [course.id];
+
+            // Remove previous assignments not in targetCourseIds
+            academy.cursos.forEach((c) => {
+                if (c.teacherId === user.id && !targetCourseIds.includes(c.id)) {
+                    c.teacherId = undefined;
+                }
+            });
+
+            // Assign to new selected courses
+            targetCourseIds.forEach((cid) => {
+                const c = getCourse(cid);
+                if (c) c.teacherId = user.id;
+            });
         }
 
         saveState();

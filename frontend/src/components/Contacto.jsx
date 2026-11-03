@@ -345,6 +345,7 @@ export const Contacto = ({ showToast }) => {
                     borderRadius: '10px',
                     border: errors.mensaje ? '2px solid #FF5252' : 'none',
                     fontSize: '0.95rem',
+                    fontFamily: 'var(--font-sans)',
                     outline: 'none',
                     backgroundColor: '#FFFFFF',
                     color: '#273C2C',
