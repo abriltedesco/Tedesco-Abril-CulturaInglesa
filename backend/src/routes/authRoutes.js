@@ -3,6 +3,6 @@ import authController from '../controllers/AuthController.js';
 
 const router = Router();
 router.post('/login', authController.login);
-router.post('/register', authController.register);
+// /register eliminado de la capa pública: sólo el admin da de alta usuarios
 router.post('/logout', authController.logout);
 export default router;

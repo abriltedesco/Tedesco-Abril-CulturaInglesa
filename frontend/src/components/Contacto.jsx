@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Instagram, Phone, MapPin, Send, CheckCircle2 } from 'lucide-react';
 import { validateNombre, validateEmail, validateTelefono, validateMensaje } from '../utils/validators';
-import { alumnoService } from '../services/alumnoService';
+import { contactoService } from '../services/contactoService';
 
 export const Contacto = ({ showToast }) => {
   const [formData, setFormData] = useState({
@@ -51,17 +51,43 @@ export const Contacto = ({ showToast }) => {
     setIsLoading(true);
 
     try {
-      // Connect to Backend API (Entrega 2 endpoint POST /api/alumnos)
-      await alumnoService.create({
-        nombre: nombre,
-        apellido: apellido,
-        email: formData.email,
-        telefono: formData.telefono,
-        fechaNacimiento: '2000-01-01',
-        nivel: 'Consulta / General',
-      });
+      // Envío directo por correo; FormSubmit responde success:"true" sólo si el mail realmente se despachó
+      const emailResponse = await fetch("https://formsubmit.co/ajax/aabyted@gmail.com", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          nombre: formData.nombreApellido.trim(),
+          email: formData.email.trim(),
+          telefono: formData.telefono.trim(),
+          mensaje: formData.mensaje.trim(),
+          _subject: `Nuevo mensaje de ${formData.nombreApellido.trim()} - Cultural Inglesa de Oxford`,
+          _template: "table"
+        })
+      }).then((r) => r.json()).catch(() => null);
 
-      showToast('success', '¡Gracias por contactarnos! Tu consulta ha sido registrada exitosamente.');
+      const emailSent = emailResponse && String(emailResponse.success) === 'true';
+
+      // Registro en backend local (respaldo para el administrador)
+      const stored = await contactoService.enviar({
+        nombre: formData.nombreApellido.trim(),
+        email: formData.email.trim(),
+        telefono: formData.telefono.trim(),
+        mensaje: formData.mensaje.trim(),
+      }).then(() => true).catch((e) => { console.warn('Error en persistencia backend local:', e); return false; });
+
+      if (!emailSent && !stored) {
+        throw new Error('No pudimos enviar tu consulta. Intentá nuevamente en unos minutos.');
+      }
+
+      showToast(
+        'success',
+        emailSent
+          ? '¡Consulta enviada con éxito! Te responderemos a la brevedad.'
+          : '¡Consulta recibida! Te responderemos a la brevedad.'
+      );
       setFormData({
         nombreApellido: '',
         email: '',
@@ -71,12 +97,7 @@ export const Contacto = ({ showToast }) => {
       setErrors({});
     } catch (err) {
       console.error(err);
-      // Fallback: Even if email already exists or backend API returns conflict, give actionable feedback
-      if (err.message.includes('DUPLICATED') || err.message.includes('ya existe')) {
-        showToast('error', 'El correo ingresado ya se encuentra registrado en el sistema.');
-      } else {
-        showToast('error', err.message || 'Ocurrió un error al enviar el formulario.');
-      }
+      showToast('error', err.message || 'Ocurrió un error al enviar el formulario.');
     } finally {
       setIsLoading(false);
     }
@@ -241,7 +262,7 @@ export const Contacto = ({ showToast }) => {
                     border: errors.nombreApellido ? '2px solid #FF5252' : 'none',
                     fontSize: '0.95rem',
                     outline: 'none',
-                    backgroundColor: '#FFFFFF',
+                    backgroundColor: '#FEF7ED',
                     color: '#273C2C',
                   }}
                   aria-invalid={!!errors.nombreApellido}
@@ -276,7 +297,7 @@ export const Contacto = ({ showToast }) => {
                     border: errors.email ? '2px solid #FF5252' : 'none',
                     fontSize: '0.95rem',
                     outline: 'none',
-                    backgroundColor: '#FFFFFF',
+                    backgroundColor: '#FEF7ED',
                     color: '#273C2C',
                   }}
                   aria-invalid={!!errors.email}
@@ -311,7 +332,7 @@ export const Contacto = ({ showToast }) => {
                     border: errors.telefono ? '2px solid #FF5252' : 'none',
                     fontSize: '0.95rem',
                     outline: 'none',
-                    backgroundColor: '#FFFFFF',
+                    backgroundColor: '#FEF7ED',
                     color: '#273C2C',
                   }}
                   aria-invalid={!!errors.telefono}
@@ -347,7 +368,7 @@ export const Contacto = ({ showToast }) => {
                     fontSize: '0.95rem',
                     fontFamily: 'var(--font-sans)',
                     outline: 'none',
-                    backgroundColor: '#FFFFFF',
+                    backgroundColor: '#FEF7ED',
                     color: '#273C2C',
                     resize: 'vertical',
                   }}

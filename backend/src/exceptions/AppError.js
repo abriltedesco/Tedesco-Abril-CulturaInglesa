@@ -25,4 +25,10 @@ export class ConflictError extends AppError {
     }
 }
 
+export class ForbiddenError extends AppError {
+    constructor(message) {
+        super(message, 403);
+    }
+}
+
 export default AppError;

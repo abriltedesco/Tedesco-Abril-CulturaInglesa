@@ -6,11 +6,13 @@
         "nombre": "Admin",
         "apellido": "Cultura",
         "email": "admin@culturainglesa.com",
-        "password": "admin123",
+        "password": "$2b$10$uefyNPrBF/12PtN/pSre4eNSFDfGtEymLFA6GJOvCc2/ZueDGJ32i",
         "rol": "ADMIN",
         "dni": "00000000",
         "telefono": "1161802607",
-        "estado": "ACTIVO"
+        "estado": "ACTIVO",
+        "contactoEmergencia": "",
+        "passwordHashed": true
       },
       {
         "id": 8,
@@ -21,9 +23,11 @@
         "telefono": "1123456789",
         "fechaNacimiento": "2014-03-20",
         "rol": "ALUMNO",
-        "password": "valeria.gomez@test.com",
+        "password": "$2b$10$r1QeACuqlICrimN35IKhy.sYH9y65/WEF4fgMgpW3Wg66B1WkgaDu",
         "estado": "ACTIVO",
-        "estadoCobro": "NO COBRADO"
+        "estadoCobro": "NO COBRADO",
+        "contactoEmergencia": "",
+        "passwordHashed": true
       },
       {
         "id": 10,
@@ -33,9 +37,11 @@
         "dni": "32123456",
         "telefono": "1198765432",
         "rol": "PROFESOR",
-        "password": "mariana.profe@test.com",
+        "password": "$2b$10$iF4AYmOI3eXuMhvgASrLvul7JFRGLRKo48hHXMsv664lse3U/zCyy",
         "estado": "ACTIVO",
-        "estadoCobro": "NO COBRADO"
+        "estadoCobro": "NO COBRADO",
+        "contactoEmergencia": "Madre/Padre - Sin especificar",
+        "passwordHashed": true
       },
       {
         "id": 11,
@@ -48,7 +54,8 @@
         "rol": "ALUMNO",
         "password": "kiaragomez@gmail.com",
         "estado": "ACTIVO",
-        "estadoCobro": "NO COBRADO"
+        "estadoCobro": "NO COBRADO",
+        "contactoEmergencia": ""
       },
       {
         "id": 15,
@@ -61,7 +68,8 @@
         "rol": "PROFESOR",
         "password": "juanmaperez@yahoo.com",
         "estado": "ACTIVO",
-        "estadoCobro": "NO COBRADO"
+        "estadoCobro": "NO COBRADO",
+        "contactoEmergencia": "Madre/Padre - Sin especificar"
       },
       {
         "id": 17,
@@ -74,7 +82,36 @@
         "rol": "ALUMNO",
         "password": "geraldineperez@yahoo.com",
         "estado": "ACTIVO",
-        "estadoCobro": "NO COBRADO"
+        "estadoCobro": "NO COBRADO",
+        "contactoEmergencia": ""
+      },
+      {
+        "id": 23,
+        "nombre": "Docente",
+        "apellido": "Test",
+        "email": "docente.test@cultura.com",
+        "dni": "99887766",
+        "telefono": "11223344",
+        "rol": "PROFESOR",
+        "password": "$2b$10$ZcJkfh4K5ivLnrRS19wneuLdJKSHycTJsR6FGQPRAXVimGGz8p.wi",
+        "passwordHashed": true,
+        "estado": "ACTIVO",
+        "estadoCobro": "NO COBRADO",
+        "contactoEmergencia": ""
+      },
+      {
+        "id": 28,
+        "nombre": "Docente",
+        "apellido": "Test",
+        "email": "docente.1794781177409@cultura.com",
+        "dni": "81177409",
+        "telefono": "11223344",
+        "rol": "PROFESOR",
+        "password": "$2b$10$n3UbJiVbEKT41RRKVWAkEOhJGN2hGmp9imxXIeHIFlBDE820b1y06",
+        "passwordHashed": true,
+        "estado": "ACTIVO",
+        "estadoCobro": "NO COBRADO",
+        "contactoEmergencia": ""
       }
     ],
     "cursos": [
@@ -85,8 +122,23 @@
         "minAge": 4,
         "maxAge": 6,
         "capacity": 30,
-        "schedule": "Martes y jueves 17:00 a 18:00",
-        "inscripciones": []
+        "schedule": "Martes y Jueves y Sábado 17:00 a 18:00",
+        "inscripciones": [],
+        "days": [
+          "Martes",
+          "Jueves",
+          "Sábado"
+        ],
+        "startTime": "17:00",
+        "endTime": "18:00",
+        "prerequisiteLevel": null,
+        "teacherId": 28,
+        "fechaInicio": "2026-03-02",
+        "fechaFin": "2026-11-27",
+        "totalClases": 25,
+        "cicloLectivo": "2026",
+        "cicloIniciado": false,
+        "cicloFinalizado": false
       },
       {
         "id": 3,
@@ -97,7 +149,20 @@
         "capacity": 30,
         "schedule": "Martes y jueves 17:00 a 18:00",
         "inscripciones": [],
-        "teacherId": 15
+        "teacherId": 23,
+        "days": [
+          "Martes",
+          "Jueves"
+        ],
+        "startTime": "17:00",
+        "endTime": "18:00",
+        "prerequisiteLevel": null,
+        "fechaInicio": "2026-03-02",
+        "fechaFin": "2026-11-27",
+        "totalClases": 25,
+        "cicloLectivo": "2026",
+        "cicloIniciado": false,
+        "cicloFinalizado": false
       },
       {
         "id": 4,
@@ -108,7 +173,20 @@
         "capacity": 30,
         "schedule": "Lunes y miércoles 17:30 a 18:30",
         "inscripciones": [],
-        "teacherId": 10
+        "teacherId": 15,
+        "days": [
+          "Lunes",
+          "Miércoles"
+        ],
+        "startTime": "17:30",
+        "endTime": "18:30",
+        "prerequisiteLevel": null,
+        "fechaInicio": "2026-03-02",
+        "fechaFin": "2026-11-27",
+        "totalClases": 25,
+        "cicloLectivo": "2026",
+        "cicloIniciado": false,
+        "cicloFinalizado": false
       },
       {
         "id": 5,
@@ -118,7 +196,20 @@
         "maxAge": 17,
         "capacity": 30,
         "schedule": "Martes y jueves 18:00 a 19:00",
-        "inscripciones": []
+        "inscripciones": [],
+        "days": [
+          "Martes",
+          "Jueves"
+        ],
+        "startTime": "18:00",
+        "endTime": "19:00",
+        "prerequisiteLevel": null,
+        "fechaInicio": "2026-03-02",
+        "fechaFin": "2026-11-27",
+        "totalClases": 25,
+        "cicloLectivo": "2026",
+        "cicloIniciado": false,
+        "cicloFinalizado": false
       },
       {
         "id": 6,
@@ -128,7 +219,20 @@
         "maxAge": 30,
         "capacity": 30,
         "schedule": "Lunes y miércoles 19:00 a 20:00",
-        "inscripciones": []
+        "inscripciones": [],
+        "days": [
+          "Lunes",
+          "Miércoles"
+        ],
+        "startTime": "19:00",
+        "endTime": "20:00",
+        "prerequisiteLevel": null,
+        "fechaInicio": "2026-03-02",
+        "fechaFin": "2026-11-27",
+        "totalClases": 25,
+        "cicloLectivo": "2026",
+        "cicloIniciado": false,
+        "cicloFinalizado": false
       },
       {
         "id": 7,
@@ -138,7 +242,21 @@
         "maxAge": 99,
         "capacity": 30,
         "schedule": "Martes y jueves 19:00 a 20:00",
-        "inscripciones": []
+        "inscripciones": [],
+        "days": [
+          "Martes",
+          "Jueves"
+        ],
+        "startTime": "19:00",
+        "endTime": "20:00",
+        "prerequisiteLevel": null,
+        "fechaInicio": "2026-03-02",
+        "fechaFin": "2026-11-27",
+        "totalClases": 25,
+        "cicloLectivo": "2026",
+        "cicloIniciado": false,
+        "cicloFinalizado": false,
+        "teacherId": 10
       }
     ],
     "inscripciones": [
@@ -148,23 +266,64 @@
         "cursoId": 4,
         "estado": "PENDIENTE",
         "fecha": "2026-10-27T21:59:12.574Z",
-        "level": "Adolescentes 1"
+        "level": "Adolescentes 1",
+        "passed": false,
+        "fechaFinalizacion": null,
+        "cicloLectivo": "2026",
+        "desaprobadoPorFaltas": false,
+        "porcentajeAsistencia": 4,
+        "asistenciasPresentes": 1,
+        "ausencias": 0,
+        "totalClasesCiclo": 25
       },
       {
         "id": 12,
         "alumnoId": 11,
         "cursoId": 6,
-        "estado": "PENDIENTE",
+        "estado": "FINALIZADA",
         "fecha": "2026-10-27T22:25:52.516Z",
-        "level": "Adultos 1"
+        "level": "Adultos 1",
+        "passed": true,
+        "fechaFinalizacion": "2026-11-15T23:21:27.231Z",
+        "cicloLectivo": "2026",
+        "desaprobadoPorFaltas": false,
+        "porcentajeAsistencia": 0,
+        "asistenciasPresentes": 0,
+        "ausencias": 0,
+        "totalClasesCiclo": 25
       },
       {
         "id": 18,
         "alumnoId": 17,
         "cursoId": 3,
-        "estado": "PENDIENTE",
+        "estado": "CONFIRMADA",
         "fecha": "2026-11-03T17:34:46.656Z",
-        "level": "Inicial 2"
+        "level": "Inicial 2",
+        "passed": null,
+        "fechaFinalizacion": null,
+        "cicloLectivo": "2026",
+        "desaprobadoPorFaltas": false,
+        "porcentajeAsistencia": 0,
+        "asistenciasPresentes": 0,
+        "ausencias": 0,
+        "totalClasesCiclo": 25
+      },
+      {
+        "id": 34,
+        "alumnoId": 11,
+        "cursoId": 6,
+        "estado": "PENDIENTE",
+        "fecha": "2026-11-16T00:38:24.086Z",
+        "level": "Adultos 1",
+        "cicloLectivo": "2026",
+        "passed": null,
+        "fechaFinalizacion": null,
+        "porcentajeAsistencia": 0,
+        "desaprobadoPorFaltas": false,
+        "renewedFromId": 12,
+        "asistenciasPresentes": 0,
+        "ausencias": 0,
+        "totalClasesCiclo": 25
       }
     ],
     "calificaciones": [
@@ -224,9 +383,222 @@
         "createdAt": "2026-11-03T17:36:07.059Z"
       }
     ],
-    "asistencias": [],
-    "pagos": [],
-    "anuncios": []
+    "asistencias": [
+      {
+        "id": 32,
+        "inscripcionId": 9,
+        "teacherId": 10,
+        "date": "2026-11-15",
+        "present": true,
+        "createdAt": "2026-11-15T23:22:36.958Z"
+      }
+    ],
+    "pagos": [
+      {
+        "id": 31,
+        "enrollmentId": 9,
+        "alumnoId": 8,
+        "cursoId": 4,
+        "amount": 15000,
+        "method": "Efectivo",
+        "status": "PAGADO",
+        "date": "2026-11-15T23:18:15.795Z"
+      },
+      {
+        "id": 33,
+        "enrollmentId": 18,
+        "alumnoId": 17,
+        "cursoId": 3,
+        "amount": 20000,
+        "method": "Transferencia",
+        "status": "PAGADO",
+        "date": "2026-11-16T00:38:13.511Z"
+      }
+    ],
+    "anuncios": [],
+    "contactos": [
+      {
+        "id": 21,
+        "nombre": "Juan Perez",
+        "email": "juan@test.com",
+        "telefono": "11223344",
+        "mensaje": "Consulta prueba",
+        "leido": false,
+        "fecha": "2026-11-15T22:18:26.412Z"
+      },
+      {
+        "id": 24,
+        "nombre": "Juan Perez",
+        "email": "juan@test.com",
+        "telefono": "11223344",
+        "mensaje": "Consulta prueba",
+        "leido": false,
+        "fecha": "2026-11-15T22:19:02.604Z"
+      },
+      {
+        "id": 26,
+        "nombre": "Juan Perez",
+        "email": "juan@test.com",
+        "telefono": "11223344",
+        "mensaje": "Consulta prueba",
+        "leido": false,
+        "fecha": "2026-11-15T22:19:37.340Z"
+      },
+      {
+        "id": 30,
+        "nombre": "Clara fernandez",
+        "email": "c1arit4fernand3z@gmail.com",
+        "telefono": "1164869695",
+        "mensaje": "Holaaa porebandoodasodnsafnds",
+        "leido": false,
+        "fecha": "2026-11-15T23:17:02.119Z"
+      },
+      {
+        "id": 35,
+        "nombre": "Clara fernandez",
+        "email": "claaaarit4@gmail.com",
+        "telefono": "1123456789",
+        "mensaje": "dfsgdsgfdgffd",
+        "leido": false,
+        "fecha": "2026-11-16T00:52:00.683Z"
+      },
+      {
+        "id": 36,
+        "nombre": "Clara fernandez",
+        "email": "clarit5555@gmail.com",
+        "telefono": "1234567",
+        "mensaje": "fgdghdsfhgfhgfh",
+        "leido": false,
+        "fecha": "2026-11-16T00:56:29.784Z"
+      }
+    ],
+    "niveladorResultados": [
+      {
+        "id": 22,
+        "nombre": "Carlos",
+        "email": "carlos@test.com",
+        "respuestas": [
+          {
+            "preguntaId": 1,
+            "opcion": 0
+          },
+          {
+            "preguntaId": 2,
+            "opcion": 0
+          },
+          {
+            "preguntaId": 3,
+            "opcion": 1
+          }
+        ],
+        "puntaje": 3,
+        "nivelSugerido": "Inicial 1",
+        "fecha": "2026-11-15T22:18:26.417Z"
+      },
+      {
+        "id": 25,
+        "nombre": "Carlos",
+        "email": "carlos@test.com",
+        "respuestas": [
+          {
+            "preguntaId": 1,
+            "opcion": 0
+          },
+          {
+            "preguntaId": 2,
+            "opcion": 0
+          },
+          {
+            "preguntaId": 3,
+            "opcion": 1
+          }
+        ],
+        "puntaje": 3,
+        "nivelSugerido": "Inicial 1",
+        "fecha": "2026-11-15T22:19:02.610Z"
+      },
+      {
+        "id": 27,
+        "nombre": "Carlos",
+        "email": "carlos@test.com",
+        "respuestas": [
+          {
+            "preguntaId": 1,
+            "opcion": 0
+          },
+          {
+            "preguntaId": 2,
+            "opcion": 0
+          },
+          {
+            "preguntaId": 3,
+            "opcion": 1
+          }
+        ],
+        "puntaje": 3,
+        "nivelSugerido": "Inicial 1",
+        "fecha": "2026-11-15T22:19:37.345Z"
+      },
+      {
+        "id": 29,
+        "nombre": "abril mia tedesco",
+        "email": "aabyted@gmail.com",
+        "respuestas": [
+          {
+            "preguntaId": 1,
+            "opcion": 0
+          },
+          {
+            "preguntaId": 2,
+            "opcion": 0
+          },
+          {
+            "preguntaId": 3,
+            "opcion": 1
+          },
+          {
+            "preguntaId": 4,
+            "opcion": 0
+          },
+          {
+            "preguntaId": 5,
+            "opcion": 1
+          },
+          {
+            "preguntaId": 6,
+            "opcion": 0
+          },
+          {
+            "preguntaId": 7,
+            "opcion": 1
+          },
+          {
+            "preguntaId": 8,
+            "opcion": 0
+          },
+          {
+            "preguntaId": 9,
+            "opcion": 1
+          },
+          {
+            "preguntaId": 10,
+            "opcion": 1
+          },
+          {
+            "preguntaId": 11,
+            "opcion": 1
+          },
+          {
+            "preguntaId": 12,
+            "opcion": 2
+          }
+        ],
+        "puntaje": 27,
+        "nivelSugerido": "Adultos 2",
+        "fecha": "2026-11-15T23:16:13.980Z"
+      }
+    ],
+    "pagosDocentes": []
   },
-  "nextId": 21
+  "nextId": 37
 }

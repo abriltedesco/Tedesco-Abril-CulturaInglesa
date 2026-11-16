@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1,
+    "pregunta": "What ___ your name?",
+    "opciones": ["is", "are", "am", "be"],
+    "correcta": 0,
+    "nivel": "Inicial 1",
+    "puntaje": 1
+  },
+  {
+    "id": 2,
+    "pregunta": "She ___ a teacher.",
+    "opciones": ["is", "are", "am", "be"],
+    "correcta": 0,
+    "nivel": "Inicial 1",
+    "puntaje": 1
+  },
+  {
+    "id": 3,
+    "pregunta": "How many ___ are there in the room?",
+    "opciones": ["chair", "chairs", "chairing", "chaired"],
+    "correcta": 1,
+    "nivel": "Inicial 1",
+    "puntaje": 1
+  },
+  {
+    "id": 4,
+    "pregunta": "I ___ breakfast every morning.",
+    "opciones": ["have", "has", "having", "had"],
+    "correcta": 0,
+    "nivel": "Inicial 2",
+    "puntaje": 2
+  },
+  {
+    "id": 5,
+    "pregunta": "They ___ to school yesterday.",
+    "opciones": ["go", "went", "goes", "going"],
+    "correcta": 1,
+    "nivel": "Inicial 2",
+    "puntaje": 2
+  },
+  {
+    "id": 6,
+    "pregunta": "She ___ been working here for three years.",
+    "opciones": ["has", "have", "had", "is"],
+    "correcta": 0,
+    "nivel": "Adolescentes 1",
+    "puntaje": 3
+  },
+  {
+    "id": 7,
+    "pregunta": "If I ___ more time, I would study harder.",
+    "opciones": ["have", "had", "has", "would have"],
+    "correcta": 1,
+    "nivel": "Adolescentes 1",
+    "puntaje": 3
+  },
+  {
+    "id": 8,
+    "pregunta": "By the time she arrived, they ___ already left.",
+    "opciones": ["had", "have", "were", "would"],
+    "correcta": 0,
+    "nivel": "Adolescentes 2",
+    "puntaje": 4
+  },
+  {
+    "id": 9,
+    "pregunta": "He suggested ___ the project before the deadline.",
+    "opciones": ["finish", "to finish", "finishing", "finished"],
+    "correcta": 2,
+    "nivel": "Adolescentes 2",
+    "puntaje": 4
+  },
+  {
+    "id": 10,
+    "pregunta": "Despite ___ hard, she didn't pass the exam.",
+    "opciones": ["study", "studying", "studied", "to study"],
+    "correcta": 1,
+    "nivel": "Adultos 1",
+    "puntaje": 5
+  },
+  {
+    "id": 11,
+    "pregunta": "The report ___ by the committee before it was published.",
+    "opciones": ["reviewed", "was reviewed", "has reviewed", "reviewing"],
+    "correcta": 1,
+    "nivel": "Adultos 1",
+    "puntaje": 5
+  },
+  {
+    "id": 12,
+    "pregunta": "Had she known about the meeting, she ___ attended.",
+    "opciones": ["would", "would have", "had", "will have"],
+    "correcta": 1,
+    "nivel": "Adultos 2",
+    "puntaje": 6
+  }
+]

@@ -23,4 +23,22 @@ export const assertUnique = (items, field, value, message) => {
     if (items.some((item) => String(item[field]).toLowerCase() === String(value).toLowerCase())) throw new ConflictError(message);
 };
 
-export const overlaps = (a, b) => a.day === b.day && a.start < b.end && b.start < a.end;
+/**
+ * RN-05: Detecta superposición de horarios entre dos cursos.
+ * Cada curso debe tener days[], startTime (HH:MM) y endTime (HH:MM).
+ */
+const timeToMinutes = (t) => {
+    const [h, m] = String(t || '00:00').split(':').map(Number);
+    return h * 60 + (m || 0);
+};
+
+export const overlaps = (cursoA, cursoB) => {
+    if (!cursoA.days?.length || !cursoB.days?.length) return false;
+    const sharedDay = cursoA.days.some((d) => cursoB.days.includes(d));
+    if (!sharedDay) return false;
+    const aStart = timeToMinutes(cursoA.startTime);
+    const aEnd = timeToMinutes(cursoA.endTime);
+    const bStart = timeToMinutes(cursoB.startTime);
+    const bEnd = timeToMinutes(cursoB.endTime);
+    return aStart < bEnd && bStart < aEnd;
+};

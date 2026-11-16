@@ -1,0 +1,11 @@
+{
+  "name": "tedesco-abril-cultura-inglesa",
+  "version": "1.0.0",
+  "description": "Instituto Cultural Inglesa de Oxford - Entrega Final",
+  "scripts": {
+    "start": "node backend/src/server.js",
+    "dev:backend": "node --watch backend/src/server.js",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "build:frontend": "npm run build --prefix frontend"
+  }
+}

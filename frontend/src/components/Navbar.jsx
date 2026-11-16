@@ -8,7 +8,8 @@ export const Navbar = ({ onOpenLogin }) => {
   const navLinks = [
     { name: 'CURSOS', href: '#cursos' },
     { name: 'SOBRE NOSOTROS', href: '#sobre-nosotros' },
-    { name: 'PREGUNTAS FRECUENTES', href: '#preguntas-frecuentes' },
+    { name: 'TEST NIVELADOR', href: '#test-nivelador' },
+    { name: 'PREGUNTAS', href: '#preguntas-frecuentes' },
     { name: 'CONTACTO', href: '#contacto' },
   ];
 
@@ -79,8 +80,10 @@ export const Navbar = ({ onOpenLogin }) => {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '28px',
+              gap: '16px',
               listStyle: 'none',
+              margin: 0,
+              padding: 0,
             }}
           >
             {navLinks.map((link) => (
@@ -89,10 +92,13 @@ export const Navbar = ({ onOpenLogin }) => {
                   href={link.href}
                   onClick={handleNavClick}
                   style={{
-                    fontSize: '0.85rem',
+                    fontSize: '0.8rem',
                     fontWeight: 700,
-                    letterSpacing: '0.5px',
+                    letterSpacing: '0.4px',
                     color: '#273C2C',
+                    textDecoration: 'none',
+                    whiteSpace: 'nowrap',
+                    padding: '6px 4px',
                     transition: 'color 0.2s ease',
                   }}
                   onMouseEnter={(e) => (e.target.style.color = '#1F3A60')}
@@ -110,19 +116,22 @@ export const Navbar = ({ onOpenLogin }) => {
                 style={{
                   backgroundColor: '#1F3A60',
                   color: '#FFFFFF',
-                  padding: '8px 16px',
+                  padding: '7px 14px',
                   borderRadius: '20px',
-                  fontSize: '0.82rem',
+                  fontSize: '0.8rem',
                   fontWeight: 700,
                   letterSpacing: '0.5px',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
                   boxShadow: '0 2px 6px rgba(31, 58, 96, 0.2)',
+                  border: 'none',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap'
                 }}
                 aria-label="Abrir gestión de alumnos"
               >
-                <LogIn size={16} />
+                <LogIn size={15} />
                 INGRESAR
               </button>
             </li>
@@ -208,7 +217,7 @@ export const Navbar = ({ onOpenLogin }) => {
 
       {/* Responsive Style block for mobile nav */}
       <style>{`
-        @media (max-width: 900px) {
+        @media (max-width: 980px) {
           .desktop-nav {
             display: none !important;
           }

@@ -39,8 +39,8 @@ export const LoginPage = ({ onLogin, onBack }) => {
       <div
         style={{
           width: 'min(480px, 100%)',
-          backgroundColor: '#FFFFFF',
-          border: '1px solid rgba(39, 60, 44, 0.15)',
+          backgroundColor: '#FAF3E8',
+          border: '1.5px solid rgba(39, 60, 44, 0.2)',
           borderRadius: 20,
           padding: '32px 28px',
           boxShadow: '0 8px 30px rgba(39,60,44,0.08)',
@@ -103,6 +103,7 @@ export const LoginPage = ({ onLogin, onBack }) => {
                 fontSize: '0.92rem',
                 outline: 'none',
                 boxSizing: 'border-box',
+                backgroundColor: '#FEF7ED',
               }}
             />
           </div>
@@ -129,6 +130,7 @@ export const LoginPage = ({ onLogin, onBack }) => {
                 fontSize: '0.92rem',
                 outline: 'none',
                 boxSizing: 'border-box',
+                backgroundColor: '#FEF7ED',
               }}
             />
           </div>
