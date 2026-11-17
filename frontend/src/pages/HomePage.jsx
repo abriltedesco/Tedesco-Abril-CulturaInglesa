@@ -5,7 +5,7 @@ import { Cursos } from '../components/Cursos';
 import { DividerBanner } from '../components/DividerBanner';
 import { SobreNosotros } from '../components/SobreNosotros';
 import { PreguntasFrecuentes } from '../components/PreguntasFrecuentes';
-import { TestNivelador } from '../components/TestNivelador';
+import { Galeria } from '../components/Galeria';
 import { Contacto } from '../components/Contacto';
 import { Footer } from '../components/Footer';
 import { NotificationToast } from '../components/NotificationToast';
@@ -32,7 +32,7 @@ export const HomePage = ({ onOpenLogin }) => {
         <DividerBanner text="El futuro no se espera, se prepara" />        
         <PreguntasFrecuentes />        
         <DividerBanner text="Dominar el inglés ya no es un simple “extra” en el currículum, sino una herramienta indispensable para abrir puertas y crear verdaderas oportunidades, tanto a nivel personal como profesional." />
-        <TestNivelador showToast={showToast} />
+        <Galeria />
         <Contacto showToast={showToast} />
       </main>
 

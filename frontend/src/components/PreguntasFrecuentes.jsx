@@ -9,7 +9,7 @@ export const PreguntasFrecuentes = () => {
     {
       id: 1,
       question: '¿Para que edades y que niveles están dirigidas las clases?',
-      answer: 'Los niveles son por edad y dirigimos las clases desde niños apartir de los 4 años hasta adultos.',
+      answer: 'Desde los 4 años hasta adultos. Los más chicos se agrupan por edad (Kids a Fourth Grade) y, desde Third Year, el nivel depende de tu conocimiento.',
     },
     {
       id: 2,

@@ -217,9 +217,8 @@ export const PortalPage = ({ user, onLogout }) => {
           justifyContent: 'space-between',
           alignItems: 'center',
           padding: '0 clamp(20px, 6vw, 48px)',
-          background: '#FEF7ED',
-          borderBottom: '1px solid rgba(39,60,44,0.15)',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.02)',
+          background: '#273C2C',
+          borderBottom: 'none',
           position: 'sticky',
           top: 0,
           zIndex: 40,
@@ -229,13 +228,13 @@ export const PortalPage = ({ user, onLogout }) => {
           <img
             src={logoImg}
             alt="Logo Cultural Inglesa de Oxford"
-            style={{ width: 44, height: 44, objectFit: 'cover', borderRadius: 8, border: '1px solid #273C2C' }}
+            style={{ width: 44, height: 44, objectFit: 'cover', borderRadius: 8 }}
           />
           <div className="portal-nav-title" style={{ display: 'flex', flexDirection: 'column' }}>
-            <strong style={{ fontFamily: 'var(--font-serif)', lineHeight: 1.15, fontSize: '0.95rem', color: '#273C2C' }}>
+            <strong style={{ fontFamily: 'var(--font-serif)', lineHeight: 1.15, fontSize: '0.95rem', color: '#FEF7ED', letterSpacing: '1px' }}>
               CULTURAL INGLESA DE OXFORD
             </strong>
-            <span style={{ fontSize: '0.75rem', color: '#687768', fontWeight: 600, letterSpacing: '0.5px' }}>
+            <span style={{ fontSize: '0.72rem', color: 'rgba(254,247,237,0.7)', fontWeight: 600, letterSpacing: '2px' }}>
               PORTAL {isStudent ? 'DEL ESTUDIANTE' : 'DOCENTE'}
             </span>
           </div>
@@ -251,14 +250,14 @@ export const PortalPage = ({ user, onLogout }) => {
               gap: 8,
               fontWeight: 700,
               padding: '8px 14px',
-              borderRadius: 12,
-              background: '#FAF3E8',
-              border: '1px solid rgba(39,60,44,0.15)',
-              color: '#273C2C',
+              borderRadius: 999,
+              background: 'rgba(254,247,237,0.12)',
+              border: '1px solid rgba(254,247,237,0.3)',
+              color: '#FEF7ED',
               fontSize: '0.88rem'
             }}
           >
-            <User size={18} color="#1F3A60" />
+            <User size={18} color="#FEF7ED" />
             <span style={{ maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {user.nombre ? `${user.nombre} ${user.apellido || ''}` : user.email}
             </span>
@@ -321,6 +320,34 @@ export const PortalPage = ({ user, onLogout }) => {
         </div>
       </header>
 
+      <div
+        style={{
+          background: '#273C2C',
+          color: '#FEF7ED',
+          padding: 'clamp(28px, 5vw, 48px) clamp(20px, 6vw, 48px) clamp(36px, 6vw, 60px)',
+          borderTop: '1px solid rgba(254,247,237,0.12)',
+        }}
+      >
+        <h1
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: 'clamp(1.6rem, 4vw, 2.5rem)',
+            fontWeight: 700,
+            letterSpacing: '1px',
+            textTransform: 'uppercase',
+            color: '#FEF7ED',
+            margin: 0,
+          }}
+        >
+          Hola, {user.nombre || 'bienvenido/a'}
+        </h1>
+        <p style={{ marginTop: 10, color: 'rgba(254,247,237,0.8)', fontSize: '1rem' }}>
+          {isStudent
+            ? 'Acá podés seguir tus cursos, notas, asistencias y pagos.'
+            : 'Acá podés cargar calificaciones y tomar asistencia de tus cursos.'}
+        </p>
+      </div>
+
       {/* Main Content Area */}
       <section className="page-content-wrapper" style={{ flex: 1 }}>
         {isStudent && !enrollments.some((e) => ['PENDIENTE', 'CONFIRMADA', 'EN_CURSO'].includes(e.estado)) && (
@@ -361,86 +388,26 @@ export const PortalPage = ({ user, onLogout }) => {
           </div>
         )}
 
-        {/* Segmented Tabs internas */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
+        {/* Tabs internas */}
+        <div style={{ display: 'flex', gap: 28, marginBottom: 28, flexWrap: 'wrap', borderBottom: '1.5px solid rgba(39,60,44,0.2)' }}>
           {isStudent ? (
             <>
-              <button
-                onClick={() => setActivePortalTab('CURSOS')}
-                style={{
-                  padding: '9px 18px',
-                  borderRadius: 10,
-                  fontWeight: 700,
-                  fontSize: '0.88rem',
-                  border: 'none',
-                  cursor: 'pointer',
-                  background: activePortalTab === 'CURSOS' ? '#273C2C' : '#EAE1D3',
-                  color: activePortalTab === 'CURSOS' ? '#FFFFFF' : '#4A554A',
-                }}
-              >
+              <button onClick={() => setActivePortalTab('CURSOS')} style={tabStyle(activePortalTab === 'CURSOS')}>
                 Mis Cursos y Notas
               </button>
-              <button
-                onClick={() => setActivePortalTab('ASISTENCIAS')}
-                style={{
-                  padding: '9px 18px',
-                  borderRadius: 10,
-                  fontWeight: 700,
-                  fontSize: '0.88rem',
-                  border: 'none',
-                  cursor: 'pointer',
-                  background: activePortalTab === 'ASISTENCIAS' ? '#273C2C' : '#EAE1D3',
-                  color: activePortalTab === 'ASISTENCIAS' ? '#FFFFFF' : '#4A554A',
-                }}
-              >
+              <button onClick={() => setActivePortalTab('ASISTENCIAS')} style={tabStyle(activePortalTab === 'ASISTENCIAS')}>
                 Mis Asistencias
               </button>
-              <button
-                onClick={() => setActivePortalTab('PAGOS')}
-                style={{
-                  padding: '9px 18px',
-                  borderRadius: 10,
-                  fontWeight: 700,
-                  fontSize: '0.88rem',
-                  border: 'none',
-                  cursor: 'pointer',
-                  background: activePortalTab === 'PAGOS' ? '#273C2C' : '#EAE1D3',
-                  color: activePortalTab === 'PAGOS' ? '#FFFFFF' : '#4A554A',
-                }}
-              >
+              <button onClick={() => setActivePortalTab('PAGOS')} style={tabStyle(activePortalTab === 'PAGOS')}>
                 Historial de Pagos
               </button>
             </>
           ) : (
             <>
-              <button
-                onClick={() => setActivePortalTab('CALIFICACIONES')}
-                style={{
-                  padding: '9px 18px',
-                  borderRadius: 10,
-                  fontWeight: 700,
-                  fontSize: '0.88rem',
-                  border: 'none',
-                  cursor: 'pointer',
-                  background: activePortalTab === 'CALIFICACIONES' ? '#273C2C' : '#EAE1D3',
-                  color: activePortalTab === 'CALIFICACIONES' ? '#FFFFFF' : '#4A554A',
-                }}
-              >
+              <button onClick={() => setActivePortalTab('CALIFICACIONES')} style={tabStyle(activePortalTab === 'CALIFICACIONES')}>
                 Carga de Calificaciones
               </button>
-              <button
-                onClick={() => setActivePortalTab('ASISTENCIA')}
-                style={{
-                  padding: '9px 18px',
-                  borderRadius: 10,
-                  fontWeight: 700,
-                  fontSize: '0.88rem',
-                  border: 'none',
-                  cursor: 'pointer',
-                  background: activePortalTab === 'ASISTENCIA' ? '#273C2C' : '#EAE1D3',
-                  color: activePortalTab === 'ASISTENCIA' ? '#FFFFFF' : '#4A554A',
-                }}
-              >
+              <button onClick={() => setActivePortalTab('ASISTENCIA')} style={tabStyle(activePortalTab === 'ASISTENCIA')}>
                 Toma de Asistencia
               </button>
             </>
@@ -1158,6 +1125,21 @@ const tableContainerStyle = {
   overflowX: 'auto',
   boxShadow: 'var(--shadow-sm)',
 };
+
+const tabStyle = (active) => ({
+  padding: '12px 2px',
+  marginBottom: -1.5,
+  fontWeight: 700,
+  fontSize: '0.88rem',
+  letterSpacing: '1px',
+  textTransform: 'uppercase',
+  border: 'none',
+  borderBottom: `3px solid ${active ? '#273C2C' : 'transparent'}`,
+  background: 'none',
+  cursor: 'pointer',
+  color: active ? '#273C2C' : '#687768',
+  transition: 'color 0.2s ease, border-color 0.2s ease',
+});
 
 const thStyle = {
   padding: '16px 20px',

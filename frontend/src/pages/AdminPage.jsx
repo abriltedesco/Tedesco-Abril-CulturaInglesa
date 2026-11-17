@@ -79,6 +79,8 @@ export const AdminPage = ({ showToast, onLogout }) => {
   const [teacherPayAmount, setTeacherPayAmount] = useState(300000);
   const [teacherPayMethod, setTeacherPayMethod] = useState('Transferencia');
   const [estadoFilter, setEstadoFilter] = useState('TODOS');
+  const [kindFilter, setKindFilter] = useState('TODOS'); // 'TODOS' | 'ALUMNO' | 'PROFESOR'
+  const [filterOpen, setFilterOpen] = useState(false);
   // Modal de Confirmación genérica (para eliminar)
   const [confirmDelete, setConfirmDelete] = useState({ open: false, type: '', id: null, title: '' });
 
@@ -87,8 +89,8 @@ export const AdminPage = ({ showToast, onLogout }) => {
   const [isSaving, setIsSaving] = useState(false); 
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const loadState = async () => { 
-    setIsLoading(true);
+  const loadState = async (silent = false) => { 
+    if (!silent) setIsLoading(true);
     try { 
       setState(await academyService.getState()); 
     } catch (e) {
@@ -121,24 +123,25 @@ export const AdminPage = ({ showToast, onLogout }) => {
   };
   const getTeacherPayment = (teacherId, period) =>
     (state.pagosDocentes || []).find((p) => p.teacherId === teacherId && p.period === period);
-  const pendingTeachers = useMemo(
-    () => (state.users || []).filter((u) => u.rol === 'PROFESOR' && !getTeacherPayment(u.id, currentPeriod)),
-    [state.users, state.pagosDocentes, currentPeriod]
-  );
 
   const handleTeacherPayment = async (e) => {
     e.preventDefault();
     setIsSaving(true);
     try {
-      await academyService.payTeacher({
+      const saved = await academyService.payTeacher({
         teacherId: teacherPay.teacherId,
         period: teacherPay.period,
         amount: Number(teacherPayAmount),
         method: teacherPayMethod,
       });
+      const payment = saved?.data ?? saved;
+      // Se refleja el cambio en pantalla de inmediato y luego se sincroniza con el servidor
+      if (payment?.id) {
+        setState((prev) => ({ ...prev, pagosDocentes: [...(prev.pagosDocentes || []), payment] }));
+      }
       showToast('success', 'Pago al docente registrado.');
       setTeacherPay(null);
-      await loadState();
+      await loadState(true);
     } catch (err) {
       showToast('error', err.message);
     } finally {
@@ -210,8 +213,9 @@ export const AdminPage = ({ showToast, onLogout }) => {
   const submitUser = async (e) => { 
     e.preventDefault(); 
     const emerg = String(form.contactoEmergencia || '').trim();
-    if (form.rol === 'ALUMNO' && !emerg) {
-      showToast('error', 'El contacto de emergencia es obligatorio para alumnos (VAL-03).');
+    const isMinorStudent = form.rol === 'ALUMNO' && form.fechaNacimiento && calculateAge(form.fechaNacimiento) < 18;
+    if (isMinorStudent && !emerg) {
+      showToast('error', 'El contacto de emergencia es obligatorio para alumnos menores de 18 años (VAL-03).');
       return;
     }
     if (form.rol === 'PROFESOR' && (!form.cursoIds || form.cursoIds.length === 0)) {
@@ -223,7 +227,7 @@ export const AdminPage = ({ showToast, onLogout }) => {
     try {
       const payload = {
         ...form,
-        contactoEmergencia: emerg || 'Contacto Familiar'
+        contactoEmergencia: emerg
       };
       if (form.id) {
         await academyService.updateUser(form.id, payload); 
@@ -383,20 +387,31 @@ export const AdminPage = ({ showToast, onLogout }) => {
     if (!selectedEnrollment) return;
     setIsSaving(true);
     try {
-      await academyService.payEnrollment({
+      const payment = await academyService.payEnrollment({
         enrollmentId: selectedEnrollment.id,
         amount: Number(paymentAmount),
         method: paymentMethod
       });
+      // Se refleja el cambio en pantalla de inmediato y luego se sincroniza con el servidor
+      setState((prev) => ({
+        ...prev,
+        pagos: payment?.id ? [...(prev.pagos || []), payment] : prev.pagos,
+        inscripciones: (prev.inscripciones || []).map((i) =>
+          i.id === selectedEnrollment.id ? { ...i, estado: 'CONFIRMADA' } : i
+        ),
+      }));
       showToast('success', 'Pago registrado. La vacante quedó CONFIRMADA.');
       setShowPaymentModal(false);
-      await loadState();
+      setSelectedEnrollment(null);
+      await loadState(true);
     } catch (err) {
       showToast('error', err.message);
     } finally {
       setIsSaving(false);
     }
   };
+
+  const isMinorForm = form.rol === 'ALUMNO' && !!form.fechaNacimiento && calculateAge(form.fechaNacimiento) < 18;
 
   const computedStudentCourse = useMemo(() => {
     if (form.rol !== 'ALUMNO' || !form.fechaNacimiento) return null;
@@ -424,17 +439,32 @@ export const AdminPage = ({ showToast, onLogout }) => {
   };
 
   const ESTADO_FILTROS = [
-    ['TODOS', 'Todos'],
+    ['TODOS', 'Todos los estados'],
     ['PENDIENTE', 'Pendientes'],
+    ['PAGADO', 'Pagados (docentes)'],
     ['CONFIRMADA', 'Confirmadas'],
     ['EN_CURSO', 'En curso'],
     ['FINALIZADA', 'Finalizadas'],
     ['CANCELADA', 'Canceladas'],
   ];
 
-  const filteredEnrollments = useMemo(
-    () => (state.inscripciones || []).filter((i) => estadoFilter === 'TODOS' || i.estado === estadoFilter),
-    [state.inscripciones, estadoFilter]
+  // Filas de "Inscripciones y pagos": inscripciones de alumnos y pago mensual de cada docente
+  const paymentRows = useMemo(() => {
+    const studentRows = (state.inscripciones || []).map((ins) => ({ kind: 'ALUMNO', key: `a-${ins.id}`, estado: ins.estado, ins }));
+    const teacherRows = (state.users || [])
+      .filter((u) => u.rol === 'PROFESOR')
+      .map((t) => {
+        const payment = (state.pagosDocentes || []).find((p) => p.teacherId === t.id && p.period === currentPeriod);
+        return { kind: 'PROFESOR', key: `p-${t.id}`, estado: payment ? 'PAGADO' : 'PENDIENTE', teacher: t, payment };
+      });
+    return [...studentRows, ...teacherRows];
+  }, [state.inscripciones, state.users, state.pagosDocentes, currentPeriod]);
+
+  const filteredRows = useMemo(
+    () => paymentRows.filter((r) =>
+      (kindFilter === 'TODOS' || r.kind === kindFilter) && (estadoFilter === 'TODOS' || r.estado === estadoFilter)
+    ),
+    [paymentRows, kindFilter, estadoFilter]
   );
 
   return (
@@ -682,7 +712,7 @@ export const AdminPage = ({ showToast, onLogout }) => {
         {/* --- VISTA: TAB CURSOS --- */}
         {activeTab === 'CURSOS' && (
           <div>
-            <div className="desktop-table-view" style={tableContainerStyle}>
+            <div className="admin-table" style={tableContainerStyle}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ background: '#273C2C', color: '#FFFFFF' }}>
@@ -743,7 +773,7 @@ export const AdminPage = ({ showToast, onLogout }) => {
                               Req: {c.prerequisiteLevel}
                             </span>
                           ) : (
-                            <span style={{ color: '#817D78', fontSize: '0.82rem' }}>Inicial</span>
+                            <span style={{ color: '#817D78', fontSize: '0.82rem' }}>Sin correlativa</span>
                           )}
                         </td>
                         <td style={tdStyle}>
@@ -784,16 +814,17 @@ export const AdminPage = ({ showToast, onLogout }) => {
         {/* --- VISTA: TAB INSCRIPCIONES Y PAGOS --- */}
         {activeTab === 'INSCRIPCIONES' && (
           <div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
-              {ESTADO_FILTROS.map(([value, label]) => {
-                const count = value === 'TODOS'
-                  ? state.inscripciones.length
-                  : state.inscripciones.filter((i) => i.estado === value).length;
-                const active = estadoFilter === value;
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+              {[
+                ['TODOS', 'Todos', paymentRows.length],
+                ['ALUMNO', 'Estudiantes', paymentRows.filter((r) => r.kind === 'ALUMNO').length],
+                ['PROFESOR', 'Profesores', paymentRows.filter((r) => r.kind === 'PROFESOR').length],
+              ].map(([value, label, count]) => {
+                const active = kindFilter === value;
                 return (
                   <button
                     key={value}
-                    onClick={() => setEstadoFilter(value)}
+                    onClick={() => setKindFilter(value)}
                     style={{
                       padding: '7px 14px',
                       borderRadius: 10,
@@ -809,29 +840,131 @@ export const AdminPage = ({ showToast, onLogout }) => {
                   </button>
                 );
               })}
+
+              <div style={{ position: 'relative', marginLeft: 'auto' }}>
+                <button
+                  onClick={() => setFilterOpen((v) => !v)}
+                  aria-haspopup="listbox"
+                  aria-expanded={filterOpen}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '7px 6px',
+                    fontWeight: 700,
+                    fontSize: '0.88rem',
+                    color: '#273C2C',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Filtros{estadoFilter !== 'TODOS' ? `: ${ESTADO_FILTROS.find(([v]) => v === estadoFilter)?.[1]}` : ''}
+                  <ChevronDown size={16} style={{ transform: filterOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }} />
+                </button>
+                {filterOpen && (
+                  <div
+                    role="listbox"
+                    style={{
+                      position: 'absolute',
+                      right: 0,
+                      top: 'calc(100% + 4px)',
+                      zIndex: 30,
+                      minWidth: 210,
+                      background: '#FFFFFF',
+                      border: '1px solid rgba(39,60,44,0.18)',
+                      borderRadius: 12,
+                      padding: 6,
+                      boxShadow: 'var(--shadow-md)',
+                    }}
+                  >
+                    {ESTADO_FILTROS.map(([value, label]) => (
+                      <button
+                        key={value}
+                        role="option"
+                        aria-selected={estadoFilter === value}
+                        onClick={() => { setEstadoFilter(value); setFilterOpen(false); }}
+                        style={{
+                          width: '100%',
+                          textAlign: 'left',
+                          padding: '9px 12px',
+                          borderRadius: 8,
+                          fontSize: '0.86rem',
+                          fontWeight: estadoFilter === value ? 800 : 500,
+                          color: '#273C2C',
+                          background: estadoFilter === value ? 'rgba(39,60,44,0.08)' : 'transparent',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="desktop-table-view" style={tableContainerStyle}>
+            <div className="admin-table" style={tableContainerStyle}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ background: '#273C2C', color: '#FFFFFF' }}>
-                    <th style={thStyle}>Alumno</th>
+                    <th style={thStyle}>Nombre</th>
+                    <th style={thStyle}>Tipo</th>
                     <th style={thStyle}>Curso</th>
-                    <th style={thStyle}>Fecha Inscripción</th>
+                    <th style={thStyle}>Fecha</th>
                     <th style={thStyle}>Estado</th>
-                    <th style={thStyle}>Condición</th>
-                    <th style={thStyle}>Asistencia</th>
+                    <th style={thStyle}>Detalle</th>
                     <th style={{ ...thStyle, textAlign: 'right' }}>Acciones de Gestión</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredEnrollments.length === 0 && (
+                  {filteredRows.length === 0 && (
                     <tr>
                       <td colSpan="7" style={{ ...tdStyle, textAlign: 'center', color: '#687768', padding: 32 }}>
-                        No hay inscripciones con este estado.
+                        No hay registros con este filtro.
                       </td>
                     </tr>
                   )}
-                  {filteredEnrollments.map((ins) => {
+                  {filteredRows.map((row) => {
+                    if (row.kind === 'PROFESOR') {
+                      const t = row.teacher;
+                      const paid = row.estado === 'PAGADO';
+                      const cursos = getCursosForUser(t);
+                      return (
+                        <tr
+                          key={row.key}
+                          style={{ ...trHoverStyle, cursor: 'pointer' }}
+                          onClick={() => setDetail({ type: 'user', id: t.id })}
+                        >
+                          <td style={{ ...tdStyle, fontWeight: 700, color: '#1F2820' }}>
+                            {t.nombre} {t.apellido}
+                            <small style={{ display: 'block', color: '#687768', fontWeight: 400 }}>DNI: {t.dni || '-'}</small>
+                          </td>
+                          <td style={tdStyle}>Profesor</td>
+                          <td style={tdStyle}>{cursos.length ? cursos.map((c) => c.name).join(', ') : 'Sin cursos'}</td>
+                          <td style={tdStyle}>{row.payment?.date ? new Date(row.payment.date).toLocaleDateString() : '-'}</td>
+                          <td style={tdStyle}>
+                            <span style={{ padding: '4px 10px', borderRadius: 8, fontSize: '0.8rem', fontWeight: 800, background: paid ? 'rgba(46,125,50,0.12)' : '#EAE1D3', color: paid ? '#2E7D32' : '#5A4E3A' }}>
+                              {paid ? 'PAGADO' : 'PENDIENTE'}
+                            </span>
+                          </td>
+                          <td style={tdStyle}>
+                            {paid ? `${periodLabel(currentPeriod)} · $${row.payment.amount} · ${row.payment.method}` : `Pago de ${periodLabel(currentPeriod)}`}
+                          </td>
+                          <td style={{ ...tdStyle, textAlign: 'right' }} onClick={(e) => e.stopPropagation()}>
+                            {!paid && (
+                              <button
+                                onClick={() => setTeacherPay({ teacherId: t.id, period: currentPeriod })}
+                                style={{ padding: '6px 12px', borderRadius: 8, background: '#273C2C', color: '#FFFFFF', fontSize: '0.82rem', fontWeight: 700, border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                              >
+                                <DollarSign size={14} /> Pagar
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    }
+
+                    const ins = row.ins;
                     const student = state.users.find((u) => u.id === ins.alumnoId);
                     const course = state.cursos.find((c) => c.id === ins.cursoId);
                     const badge = getEnrollmentBadge(ins.estado);
@@ -849,6 +982,7 @@ export const AdminPage = ({ showToast, onLogout }) => {
                             DNI: {student?.dni || '-'}
                           </small>
                         </td>
+                        <td style={tdStyle}>Alumno</td>
                         <td style={tdStyle}>{course?.name || 'Curso ID: ' + ins.cursoId}</td>
                         <td style={tdStyle}>{ins.fecha ? new Date(ins.fecha).toLocaleDateString() : '-'}</td>
                         <td style={tdStyle}>
@@ -865,12 +999,7 @@ export const AdminPage = ({ showToast, onLogout }) => {
                             }}>
                               {ins.passed ? 'Aprobado' : ins.desaprobadoPorFaltas ? 'Reprobado (faltas)' : 'Reprobado'}
                             </span>
-                          ) : (
-                            <span style={{ color: '#817D78', fontSize: '0.82rem' }}>En curso</span>
-                          )}
-                        </td>
-                        <td style={tdStyle}>
-                          {ins.estado === 'PENDIENTE' || ins.estado === 'CANCELADA' ? (
+                          ) : ins.estado === 'PENDIENTE' || ins.estado === 'CANCELADA' ? (
                             <span style={{ color: '#817D78' }}>-</span>
                           ) : (
                             <span style={{
@@ -878,7 +1007,7 @@ export const AdminPage = ({ showToast, onLogout }) => {
                               fontWeight: 700,
                               color: (ins.porcentajeAsistencia ?? 0) >= 70 ? '#273C2C' : '#B3463F'
                             }}>
-                              {ins.porcentajeAsistencia ?? 0}% ({ins.asistenciasPresentes ?? 0}/{ins.totalClasesCiclo ?? 25})
+                              Asistencia {ins.porcentajeAsistencia ?? 0}% ({ins.asistenciasPresentes ?? 0}/{ins.totalClasesCiclo ?? 25})
                             </span>
                           )}
                         </td>
@@ -904,7 +1033,7 @@ export const AdminPage = ({ showToast, onLogout }) => {
                                   gap: 4
                                 }}
                               >
-                                <DollarSign size={14} /> Cobrar matrícula
+                                <DollarSign size={14} /> Cobrar
                               </button>
                             )}
 
@@ -966,51 +1095,20 @@ export const AdminPage = ({ showToast, onLogout }) => {
                 <p style={{ fontSize: '1rem', fontWeight: 600 }}>Cargando registros...</p>
               </div>
             ) : users.length === 0 ? (
-              <div style={emptyCardStyle}>
-                {activeTab === 'ALUMNO' ? <GraduationCap size={40} color="#687768" /> : <Users size={40} color="#687768" />}
-                <h3 style={{ fontFamily: 'var(--font-serif)', color: '#273C2C', marginTop: 12 }}>
-                  No hay {activeTab === 'ALUMNO' ? 'alumnos' : 'profesores'} registrados
-                </h3>
-                <p style={{ color: '#687768', fontSize: '0.9rem', marginTop: 4 }}>
-                  Hacé clic en el botón superior para agregar el primer registro.
-                </p>
+              <div className="admin-table" style={tableContainerStyle}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <tbody>
+                    <tr>
+                      <td style={{ ...tdStyle, textAlign: 'center', color: '#687768', padding: 32 }}>
+                        No hay {activeTab === 'ALUMNO' ? 'alumnos' : 'profesores'} registrados.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             ) : (
               <div>
-                {activeTab === 'PROFESOR' && (
-                  <div style={{
-                    marginBottom: 16,
-                    padding: '14px 18px',
-                    borderRadius: 12,
-                    background: pendingTeachers.length ? '#EAE1D3' : 'rgba(39,60,44,0.08)',
-                    border: '1px solid rgba(39,60,44,0.18)',
-                    color: '#273C2C',
-                  }}>
-                    <strong>Control de pagos a docentes · {periodLabel(currentPeriod)}</strong>
-                    {pendingTeachers.length === 0 ? (
-                      <p style={{ margin: '6px 0 0', fontSize: '0.9rem' }}>Todos los docentes tienen el pago del mes registrado.</p>
-                    ) : (
-                      <>
-                        <p style={{ margin: '6px 0 10px', fontSize: '0.9rem' }}>
-                          Falta registrar el pago de {pendingTeachers.length} {pendingTeachers.length === 1 ? 'docente' : 'docentes'}:
-                        </p>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                          {pendingTeachers.map((t) => (
-                            <button
-                              key={t.id}
-                              onClick={() => setTeacherPay({ teacherId: t.id, period: currentPeriod })}
-                              style={{ padding: '6px 12px', borderRadius: 8, border: '1px solid rgba(39,60,44,0.3)', background: '#FEF7ED', color: '#273C2C', fontWeight: 600, fontSize: '0.84rem', cursor: 'pointer' }}
-                            >
-                              Pagar a {t.nombre} {t.apellido}
-                            </button>
-                          ))}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                )}
-                {/* Desktop Table View */}
-                <div className="desktop-table-view" style={tableContainerStyle}>
+                <div className="admin-table" style={tableContainerStyle}>
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead>
                       <tr style={{ background: '#273C2C', color: '#FFFFFF' }}>
@@ -1041,9 +1139,15 @@ export const AdminPage = ({ showToast, onLogout }) => {
                             <td style={tdStyle}>{u.telefono || '-'}</td>
                             {activeTab === 'ALUMNO' && (
                               <td style={tdStyle}>
-                                <span style={{ fontSize: '0.85rem', color: u.contactoEmergencia ? '#1F3A60' : '#D32F2F', fontWeight: 600 }}>
-                                  {u.contactoEmergencia || 'Faltante'}
-                                </span>
+                                {(() => {
+                                  const minor = u.fechaNacimiento && calculateAge(u.fechaNacimiento) < 18;
+                                  const missing = !u.contactoEmergencia && minor;
+                                  return (
+                                    <span style={{ fontSize: '0.85rem', color: missing ? '#D32F2F' : '#1F3A60', fontWeight: 600 }}>
+                                      {u.contactoEmergencia || (minor ? 'Faltante' : '-')}
+                                    </span>
+                                  );
+                                })()}
                               </td>
                             )}
                             <td style={tdStyle}>
@@ -1124,82 +1228,6 @@ export const AdminPage = ({ showToast, onLogout }) => {
                       })}
                     </tbody>
                   </table>
-                </div>
-
-                {/* Mobile Cards View */}
-                <div className="mobile-cards-view">
-                  {users.map((u) => {
-                    const assignedCursos = getCursosForUser(u);
-                    return (
-                      <div
-                        key={u.id}
-                        style={cardMobileStyle}
-                        onClick={() => setDetail({ type: 'user', id: u.id })}
-                      >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid rgba(39,60,44,0.1)', paddingBottom: 10 }}>
-                          <div>
-                            <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.05rem', color: '#273C2C' }}>
-                              {u.nombre} {u.apellido}
-                            </h4>
-                            <span style={{ fontSize: '0.8rem', color: '#687768' }}>
-                              DNI: {u.dni || 'Sin registrar'}
-                            </span>
-                          </div>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              openEdit(u);
-                            }}
-                            style={{
-                              padding: '6px 12px',
-                              borderRadius: 8,
-                              background: 'rgba(31,58,96,0.1)',
-                              color: '#1F3A60',
-                              fontSize: '0.82rem',
-                              fontWeight: 700,
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 4,
-                              border: 'none',
-                            }}
-                          >
-                            <Edit2 size={14} /> Editar
-                          </button>
-                        </div>
-
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 12, fontSize: '0.86rem' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#4A554A' }}>
-                            <Mail size={15} color="#1F3A60" />
-                            <span>{u.email}</span>
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#4A554A' }}>
-                            <Phone size={15} color="#1F3A60" />
-                            <span>{u.telefono || 'Sin teléfono'}</span>
-                          </div>
-                          {u.contactoEmergencia && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#2E7D32' }}>
-                              <AlertCircle size={15} />
-                              <span>Emergencia: {u.contactoEmergencia}</span>
-                            </div>
-                          )}
-                          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginTop: 4 }}>
-                            <BookOpen size={15} color="#273C2C" style={{ marginTop: 2 }} />
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                              {assignedCursos.length > 0 ? (
-                                assignedCursos.map((c) => (
-                                  <span key={c.id} style={courseBadgeStyle(c)}>
-                                    {c.name}
-                                  </span>
-                                ))
-                              ) : (
-                                <span style={courseBadgeStyle(null)}>Sin cursos</span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
                 </div>
               </div>
             )}
@@ -1309,14 +1337,14 @@ export const AdminPage = ({ showToast, onLogout }) => {
                 />
               </label>
 
-              {/* Contacto de Emergencia Obligatorio para Alumnos (VAL-03) */}
+              {/* Contacto de emergencia: solo obligatorio para menores de 18 (VAL-03) */}
               {form.rol === 'ALUMNO' && (
                 <label style={fieldLabelStyle}>
-                  Contacto de Emergencia (Nombre y Teléfono) * (VAL-03)
+                  {isMinorForm ? 'Contacto de emergencia (nombre y teléfono) *' : 'Contacto de emergencia (opcional, mayor de 18)'}
                   <input
                     name="contactoEmergencia"
                     type="text"
-                    required
+                    required={isMinorForm}
                     value={form.contactoEmergencia || ''}
                     onChange={update}
                     placeholder="Ej: Laura Rossi (Madre) - 1144556677"
@@ -1459,7 +1487,7 @@ export const AdminPage = ({ showToast, onLogout }) => {
                     required
                     value={courseForm.name}
                     onChange={(e) => setCourseForm({ ...courseForm, name: e.target.value })}
-                    placeholder="Ej. Inicial 1"
+                    placeholder="Ej. Third Year"
                     className="custom-text-input"
                   />
                 </label>
@@ -1471,7 +1499,7 @@ export const AdminPage = ({ showToast, onLogout }) => {
                     required
                     value={courseForm.level}
                     onChange={(e) => setCourseForm({ ...courseForm, level: e.target.value })}
-                    placeholder="Ej. Inicial 1 o A1"
+                    placeholder="Ej. Third Year o B1"
                     className="custom-text-input"
                   />
                 </label>
@@ -1665,10 +1693,6 @@ export const AdminPage = ({ showToast, onLogout }) => {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 12 }}>
-              <div style={{ background: '#F4F9F4', padding: 12, borderRadius: 10, border: '1px solid #A7D7A9', fontSize: '0.86rem', color: '#2E7D32' }}>
-                Al registrar este pago, el estado de la inscripción pasará automáticamente a <strong>CONFIRMADA</strong> y la vacante del alumno quedará asegurada (restando cupo).
-              </div>
-
               <label style={fieldLabelStyle}>
                 Monto abonado ($) *
                 <input
@@ -1769,7 +1793,7 @@ export const AdminPage = ({ showToast, onLogout }) => {
           ['Días', Array.isArray(course.days) ? course.days.join(', ') : '-'],
           ['Docente', courseTeacher ? `${courseTeacher.nombre} ${courseTeacher.apellido}` : 'Sin docente'],
           ['Cupo', `${activeCount} / ${course.capacity}`],
-          ['Correlatividad', course.prerequisiteLevel || 'Inicial'],
+          ['Correlatividad', course.prerequisiteLevel || 'Sin correlativa'],
           ['Rango de edad', `${course.minAge ?? '-'} a ${course.maxAge ?? '-'} años`],
           ['Ciclo lectivo', course.cicloLectivo],
           ['Fecha de inicio', fmt(course.fechaInicio)],
@@ -1859,7 +1883,7 @@ export const AdminPage = ({ showToast, onLogout }) => {
             <>
               {ins.estado === 'PENDIENTE' && (
                 <button style={btnPrimary} onClick={() => { setSelectedEnrollment(ins); setShowPaymentModal(true); setDetail(null); }}>
-                  Cobrar matrícula
+                  Cobrar
                 </button>
               )}
               {ins.estado === 'FINALIZADA' && (
@@ -1945,7 +1969,7 @@ export const AdminPage = ({ showToast, onLogout }) => {
               <>
                 {owing[0] && (
                   <button style={btnPrimary} onClick={() => { setSelectedEnrollment(owing[0]); setShowPaymentModal(true); setDetail(null); }}>
-                    Cobrar matrícula
+                    Cobrar
                   </button>
                 )}
                 <button style={{ ...btnPrimary, background: 'rgba(39,60,44,0.1)', color: '#273C2C', boxShadow: 'none' }} onClick={() => { openEdit(u); setDetail(null); }}>Editar</button>
@@ -2050,22 +2074,6 @@ const tdStyle = {
 
 const trHoverStyle = {
   transition: 'background-color 0.15s ease',
-};
-
-const cardMobileStyle = {
-  background: '#FAF3E8',
-  border: '1.5px solid rgba(39,60,44,0.14)',
-  borderRadius: 16,
-  padding: '18px 16px',
-  boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-};
-
-const emptyCardStyle = {
-  background: '#FAF3E8',
-  border: '1.5px dashed rgba(39,60,44,0.25)',
-  borderRadius: 20,
-  padding: '48px 24px',
-  textAlign: 'center',
 };
 
 const courseBadgeStyle = (c) => ({

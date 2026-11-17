@@ -61,8 +61,7 @@ class AcademyController {
             return successResponse(res, {
                 ...academy,
                 users,
-                contactos: academy.contactos || [],
-                niveladorResultados: academy.niveladorResultados || []
+                contactos: academy.contactos || []
             });
         }
 

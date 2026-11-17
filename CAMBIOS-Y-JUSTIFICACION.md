@@ -40,7 +40,7 @@ Hay cambios que cubren brechas de la auditoría y cambios nuevos pedidos durante
 | Cambio | Justificación |
 |---|---|
 | Nueva colección `pagosDocentes` y endpoint `POST /teacher-payments`, solo para admin. Hay un pago por docente y por mes (`AAAA-MM`). Cada docente ve únicamente los suyos. | Pedido del cliente: registrar que se les pagó a los docentes y controlarlo cada mes. Extiende el rol de administración (*"registrar los pagos de cuotas por ventanilla"*) al lado de egresos. |
-| Panel **"Control de pagos a docentes"** del mes en curso, con botón de pago por docente. | Es la verificación mensual pedida. Es manual: el panel lista pendientes al entrar a la pestaña, y no envía avisos automáticos. |
+| Panel **"Control de pagos a docentes"** del mes en curso, con botón de pago por docente. | **Reemplazado:** el panel se eliminó. Cada docente aparece como una fila de la tabla de **Inscripciones y pagos** con su botón **Pagar** (ver sección 7.3). La verificación sigue siendo manual y sin avisos automáticos. |
 | Drawer de profesor con datos personales, cursos, pago del mes e historial. | Un solo lugar con toda la información del docente. |
 
 Los pagos a docentes no figuran en la preparación ni en el plan, y el monto se escribe al pagar.
@@ -68,7 +68,71 @@ Los pagos a docentes no figuran en la preparación ni en el plan, y el monto se 
 
 ---
 
-## 7. Trazabilidad con la auditoría
+## 7. Niveles oficiales, test nivelador y rediseño (última revisión)
+
+### 7.1 Cursos reemplazados por los niveles oficiales
+
+Como el instituto terminó armando su propio sitio web, ya tenemos la información real de cómo se dividen los cursos. Los niveles son los de la imagen oficial y reemplazan a los anteriores (Inicial 1/2, Adolescentes 1/2, Adultos 1/2):
+
+`Kids → First Grade → Second Grade → Third Grade → Fourth Grade → Third Year → Fourth Year → Fifth Year → Sixth Year → Pre First Certificate → First Certificate`
+
+La asignación **por edad solo aplica a Inicial**; de ahí en adelante depende del **conocimiento / nivel**:
+
+| Tramo | Niveles | Criterio |
+|---|---|---|
+| Inicial | Kids, First, Second, Third y Fourth Grade | Rangos de **2 años**: 4-5, 6-7, 8-9, 10-11 y 12-13. Mantienen correlatividad entre sí (RN-02). |
+| Resto | Third Year, Fourth Year, Fifth Year, Sixth Year, Pre First Certificate y First Certificate | **No depende de la edad** sino del nivel que tenga la persona. Un First Certificate puede rendirse a cualquier edad. El sistema solo sugiere Third Year como punto de entrada desde los 14 años; se puede elegir cualquier nivel, sin correlativa ni tope de edad. |
+
+- Los datos existentes se migran automáticamente al arrancar el backend: los cursos viejos se renombran conservando su id y sus inscripciones (Inicial 1 → Kids, Inicial 2 → Second Grade, Adolescentes 1 → Fourth Grade, Adolescentes 2 → Third Year, Adultos 1 → Fifth Year, Adultos 2 → Pre First Certificate). Es una equivalencia aproximada, hay que revisarla con el instituto.
+- Los horarios de los niveles nuevos son provisorios (se reparten entre los turnos que ya existían) hasta tener los reales.
+- Las tarjetas de la home se agrupan por nivel y no por edad: **Inicial** (Kids y los 4 Grades), **Years** (Third a Sixth Year) y **Certificados** (Pre First y First Certificate).
+
+### 7.2 Test nivelador eliminado
+
+Se quitó el test nivelador (sección web, rutas `/nivelador`, controlador, preguntas y resultados guardados). Motivos: los niveles ya están definidos y publicados en la imagen oficial, y la asignación es por edad. **Por ahora creemos que el test no es útil.** Si en el futuro se retoma, tendría sentido ofrecérselo a los alumnos que ya cursan (por ejemplo, para decidir a qué nivel pasar), no como filtro de ingreso. En su lugar, la home muestra una **galería**: un carrusel infinito y lento con las fotos de la carpeta `assets` (se pausa al pasar el mouse).
+
+### 7.3 Administración
+
+| Cambio | Justificación |
+|---|---|
+| **Inscripciones y pagos** unifica alumnos y docentes. Filtros en forma de tags: *Todos (n) · Estudiantes (n) · Profesores (n)*. A la derecha, el desplegable **Filtros ▾** filtra por estado (pendiente, pagado, confirmada, en curso, finalizada, cancelada). | Pedido del cliente. Los filtros por estado pasaron a un dropdown para no ocupar la pantalla. |
+| El botón **Pagar** del docente está en su fila de esa tabla, no en un panel aparte. | Pedido del cliente. Todo el control de pagos queda en un solo lugar. |
+| Se eliminaron los paneles que no eran tablas (control de pagos a docentes, tarjetas para móvil, estados vacíos, aviso del modal de cobro). Quedan tablas (con scroll horizontal en pantallas chicas) y drawers con el detalle al tocar una fila. | Pedido del cliente. |
+| **Confirmar pago** guarda el cambio y actualiza el estado en pantalla de inmediato (inscripción a `CONFIRMADA`, pago docente a `PAGADO`), y luego sincroniza con el servidor. El botón de cobro de matrícula se llama simplemente **Cobrar**. El backend solo acepta cobrar matrículas `PENDIENTE`. | Evita doble cobro y que la tabla quede desactualizada. |
+| El **contacto de emergencia** (VAL-03) es obligatorio solo para alumnos menores de 18 años; para mayores es opcional. | Un adulto no necesita un responsable. La edad se calcula con la fecha de nacimiento, que sigue siendo obligatoria. |
+
+### 7.4 Identidad visual (a respetar en todo cambio de diseño)
+
+La página transmite seriedad, respeto y trayectoria, con calidez (vibra educacional, agradable, cálida). El diseño sale del logo de la institución y no se debe salir de esto:
+
+**Paleta**
+
+| Color | Hex | Uso |
+|---|---|---|
+| Verde oscuro | `#273C2C` | Secundario: títulos, énfasis de frases, íconos, navbar, bordes. |
+| Azul | `#1F3A60` | Acento: botones, acordeones y tarjeta de contacto, elementos más llamativos. (La ficha de diseño repite por error el hex del verde para este color; se usa el azul del logo.) |
+| Crema | `#FEF7ED` | Principal: fondo. |
+
+No usar otros colores de marca (dorados, verdes claros, etc.). Solo se admiten los de estado (éxito, error, aviso) en el panel de administración.
+
+**Tipografías: solo 2**
+
+- **Noto Serif**: títulos y frases destacadas.
+- **Stack Sans Headline**: textos, botones, navegación y el título del banner.
+
+No se debe incorporar ninguna otra fuente.
+
+**Títulos y subtítulos (deben ser constantes en toda la web)**
+
+- Títulos de sección (`h2`): Noto Serif, 2.5rem, negrita, **TODO EN MAYÚSCULAS**, verde oscuro `#273C2C`, `letter-spacing: 1px` (ej. SOBRE NOSOTROS, CONTACTO, NUESTROS CURSOS, GALERÍA). Sin textos auxiliares tipo "— Galería —" encima.
+- Subtítulos (`h3`): Noto Serif, verde oscuro, sin mayúsculas forzadas.
+- Texto corrido: Stack Sans Headline, `#4A554A`.
+
+**Home**
+
+Hero centrado con título (Stack Sans Headline) que se **escribe letra por letra**, tarjetas de cursos que **aparecen suavemente de abajo hacia arriba** al hacer scroll, sin sombras pesadas en las tarjetas, y galería en carrusel. Todas las animaciones respetan `prefers-reduced-motion`.
+
+## 8. Trazabilidad con la auditoría
 
 | Brecha de la auditoría | Estado tras estos cambios |
 |---|---|
@@ -79,9 +143,9 @@ Los pagos a docentes no figuran en la preparación ni en el plan, y el monto se 
 | UI de asistencia del docente | Resuelta, con porcentaje y umbral de 70%. |
 | Contacto sin persistencia real | Resuelta: se guarda en el backend y se envía por mail cuando el servicio está activado. |
 
-Quedan fuera de este documento las brechas de otras etapas (test nivelador, hash de contraseñas, RN-05, CRUD de cursos). El resto del plan de la Fase 2 ya estaba implementado.
+Quedan fuera de este documento las brechas de otras etapas (hash de contraseñas, RN-05, CRUD de cursos). El test nivelador se descartó (sección 7.2). El resto del plan de la Fase 2 ya estaba implementado.
 
-## 8. Pendientes y decisiones abiertas
+## 9. Pendientes y decisiones abiertas
 
 - Activar FormSubmit con el enlace enviado a `aabyted@gmail.com`.
 - Definir si la renovación debe dejar la inscripción en `PENDIENTE` (actual, exige cobrar matrícula) o directamente activa.

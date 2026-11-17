@@ -3,7 +3,7 @@ import academy, { id, saveState } from '../repositories/AcademyRepository.js';
 import { Curso, Inscripcion, Calificacion, Asistencia } from '../models/AcademyModels.js';
 import { BadRequestError, ConflictError, NotFoundError } from '../exceptions/AppError.js';
 import { EstadoInscripcion } from '../enums/EstadoInscripcion.js';
-import { assertDni, assertEmail, assertMinimumAge, assertUnique, overlaps } from '../utils/reglasNegocio.js';
+import { assertDni, assertEmail, assertMinimumAge, assertUnique, isUnderage, overlaps } from '../utils/reglasNegocio.js';
 
 const SALT_ROUNDS = 10;
 const ACTIVE_STATES = [EstadoInscripcion.PENDIENTE, EstadoInscripcion.CONFIRMADA, EstadoInscripcion.EN_CURSO];
@@ -62,12 +62,12 @@ class AcademyService {
         if (today < new Date(today.getFullYear(), dob.getMonth(), dob.getDate())) age--;
 
         let targetName = '';
-        if (age >= 4 && age <= 6) targetName = 'Inicial 1';
-        else if (age >= 7 && age <= 10) targetName = 'Inicial 2';
-        else if (age >= 11 && age <= 13) targetName = 'Adolescentes 1';
-        else if (age >= 14 && age <= 17) targetName = 'Adolescentes 2';
-        else if (age >= 18 && age <= 30) targetName = 'Adultos 1';
-        else if (age > 30) targetName = 'Adultos 2';
+        if (age >= 4 && age <= 5) targetName = 'Kids';
+        else if (age <= 7 && age >= 6) targetName = 'First Grade';
+        else if (age >= 8 && age <= 9) targetName = 'Second Grade';
+        else if (age >= 10 && age <= 11) targetName = 'Third Grade';
+        else if (age >= 12 && age <= 13) targetName = 'Fourth Grade';
+        else if (age >= 14) targetName = 'Third Year';
         else return null;
 
         return academy.cursos.find((c) => c.name.toLowerCase() === targetName.toLowerCase()) || null;
@@ -93,8 +93,8 @@ class AcademyService {
             if (!fechaNacimiento) {
                 throw new BadRequestError('La fecha de nacimiento es obligatoria para registrar un alumno (VAL-03).');
             }
-            if (!contactEmerg) {
-                throw new BadRequestError('El contacto de emergencia es obligatorio para registrar un alumno (VAL-03).');
+            if (!contactEmerg && isUnderage(fechaNacimiento)) {
+                throw new BadRequestError('El contacto de emergencia es obligatorio para alumnos menores de 18 años (VAL-03).');
             }
             assertMinimumAge(fechaNacimiento);
             const autoCourse = this.getCourseForBirthDate(fechaNacimiento);
@@ -170,8 +170,8 @@ class AcademyService {
         assertEmail(email);
         assertDni(dni);
 
-        if (user.rol === 'ALUMNO' && !contactEmerg) {
-            throw new BadRequestError('El contacto de emergencia es obligatorio (VAL-03).');
+        if (user.rol === 'ALUMNO' && !contactEmerg && isUnderage(fechaNacimiento || user.fechaNacimiento)) {
+            throw new BadRequestError('El contacto de emergencia es obligatorio para alumnos menores de 18 años (VAL-03).');
         }
 
         const primaryCourseId = cursoId || (Array.isArray(cursoIds) ? cursoIds[0] : null);
@@ -492,6 +492,9 @@ class AcademyService {
     payEnrollment(enrollmentId, amount, method) {
         const enrollment = getEnrollment(enrollmentId);
         if (!enrollment || !amount || !method) throw new BadRequestError('Datos de pago inválidos.');
+        if (enrollment.estado !== EstadoInscripcion.PENDIENTE) {
+            throw new ConflictError('La matrícula de esta inscripción ya está abonada o la inscripción no está pendiente.');
+        }
         const payment = {
             id: id(),
             enrollmentId: enrollment.id,

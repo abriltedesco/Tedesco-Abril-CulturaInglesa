@@ -112,22 +112,36 @@
         "estado": "ACTIVO",
         "estadoCobro": "NO COBRADO",
         "contactoEmergencia": ""
+      },
+      {
+        "id": 42,
+        "nombre": "Paola",
+        "apellido": "Mendes",
+        "email": "paolamendes@gmail.com",
+        "dni": "34567890",
+        "telefono": "01164769663",
+        "fechaNacimiento": "2000-11-17",
+        "contactoEmergencia": "-",
+        "rol": "ALUMNO",
+        "password": "$2b$10$/N2cCcyhb49ga42FVX0DNumJZNc.IoYRctiuMUx0A7d44fFv.smjm",
+        "passwordHashed": true,
+        "estado": "ACTIVO",
+        "estadoCobro": "NO COBRADO"
       }
     ],
     "cursos": [
       {
         "id": 2,
-        "name": "Inicial 1",
-        "level": "Inicial 1",
+        "name": "Kids",
+        "level": "Kids",
         "minAge": 4,
-        "maxAge": 6,
+        "maxAge": 5,
         "capacity": 30,
-        "schedule": "Martes y Jueves y Sábado 17:00 a 18:00",
+        "schedule": "Martes y jueves 17:00 a 18:00",
         "inscripciones": [],
         "days": [
           "Martes",
-          "Jueves",
-          "Sábado"
+          "Jueves"
         ],
         "startTime": "17:00",
         "endTime": "18:00",
@@ -141,11 +155,33 @@
         "cicloFinalizado": false
       },
       {
+        "id": 37,
+        "name": "First Grade",
+        "level": "First Grade",
+        "capacity": 30,
+        "schedule": "Lunes y miércoles 17:00 a 18:00",
+        "days": [
+          "Lunes",
+          "Miércoles"
+        ],
+        "startTime": "17:00",
+        "endTime": "18:00",
+        "minAge": 6,
+        "maxAge": 7,
+        "prerequisiteLevel": "Kids",
+        "cicloLectivo": "2026",
+        "fechaInicio": "2026-03-02",
+        "fechaFin": "2026-11-27",
+        "totalClases": 25,
+        "cicloIniciado": false,
+        "cicloFinalizado": false
+      },
+      {
         "id": 3,
-        "name": "Inicial 2",
-        "level": "Inicial 2",
-        "minAge": 7,
-        "maxAge": 10,
+        "name": "Second Grade",
+        "level": "Second Grade",
+        "minAge": 8,
+        "maxAge": 9,
         "capacity": 30,
         "schedule": "Martes y jueves 17:00 a 18:00",
         "inscripciones": [],
@@ -156,7 +192,7 @@
         ],
         "startTime": "17:00",
         "endTime": "18:00",
-        "prerequisiteLevel": null,
+        "prerequisiteLevel": "First Grade",
         "fechaInicio": "2026-03-02",
         "fechaFin": "2026-11-27",
         "totalClases": 25,
@@ -165,15 +201,60 @@
         "cicloFinalizado": false
       },
       {
+        "id": 38,
+        "name": "Third Grade",
+        "level": "Third Grade",
+        "capacity": 30,
+        "schedule": "Lunes y miércoles 17:00 a 18:00",
+        "days": [
+          "Lunes",
+          "Miércoles"
+        ],
+        "startTime": "17:00",
+        "endTime": "18:00",
+        "minAge": 10,
+        "maxAge": 11,
+        "prerequisiteLevel": "Second Grade",
+        "cicloLectivo": "2026",
+        "fechaInicio": "2026-03-02",
+        "fechaFin": "2026-11-27",
+        "totalClases": 25,
+        "cicloIniciado": false,
+        "cicloFinalizado": false
+      },
+      {
         "id": 4,
-        "name": "Adolescentes 1",
-        "level": "Adolescentes 1",
-        "minAge": 11,
+        "name": "Fourth Grade",
+        "level": "Fourth Grade",
+        "minAge": 12,
         "maxAge": 13,
+        "capacity": 30,
+        "schedule": "Martes y jueves 17:00 a 18:00",
+        "inscripciones": [],
+        "teacherId": 15,
+        "days": [
+          "Martes",
+          "Jueves"
+        ],
+        "startTime": "17:00",
+        "endTime": "18:00",
+        "prerequisiteLevel": "Third Grade",
+        "fechaInicio": "2026-03-02",
+        "fechaFin": "2026-11-27",
+        "totalClases": 25,
+        "cicloLectivo": "2026",
+        "cicloIniciado": false,
+        "cicloFinalizado": false
+      },
+      {
+        "id": 5,
+        "name": "Third Year",
+        "level": "Third Year",
+        "minAge": 14,
+        "maxAge": 99,
         "capacity": 30,
         "schedule": "Lunes y miércoles 17:30 a 18:30",
         "inscripciones": [],
-        "teacherId": 15,
         "days": [
           "Lunes",
           "Miércoles"
@@ -189,20 +270,42 @@
         "cicloFinalizado": false
       },
       {
-        "id": 5,
-        "name": "Adolescentes 2",
-        "level": "Adolescentes 2",
-        "minAge": 14,
-        "maxAge": 17,
+        "id": 39,
+        "name": "Fourth Year",
+        "level": "Fourth Year",
         "capacity": 30,
         "schedule": "Martes y jueves 18:00 a 19:00",
-        "inscripciones": [],
         "days": [
           "Martes",
           "Jueves"
         ],
         "startTime": "18:00",
         "endTime": "19:00",
+        "minAge": 14,
+        "maxAge": 99,
+        "prerequisiteLevel": null,
+        "cicloLectivo": "2026",
+        "fechaInicio": "2026-03-02",
+        "fechaFin": "2026-11-27",
+        "totalClases": 25,
+        "cicloIniciado": false,
+        "cicloFinalizado": false
+      },
+      {
+        "id": 6,
+        "name": "Fifth Year",
+        "level": "Fifth Year",
+        "minAge": 14,
+        "maxAge": 99,
+        "capacity": 30,
+        "schedule": "Lunes y miércoles 17:30 a 18:30",
+        "inscripciones": [],
+        "days": [
+          "Lunes",
+          "Miércoles"
+        ],
+        "startTime": "17:30",
+        "endTime": "18:30",
         "prerequisiteLevel": null,
         "fechaInicio": "2026-03-02",
         "fechaFin": "2026-11-27",
@@ -212,11 +315,33 @@
         "cicloFinalizado": false
       },
       {
-        "id": 6,
-        "name": "Adultos 1",
-        "level": "Adultos 1",
-        "minAge": 18,
-        "maxAge": 30,
+        "id": 40,
+        "name": "Sixth Year",
+        "level": "Sixth Year",
+        "capacity": 30,
+        "schedule": "Martes y jueves 18:00 a 19:00",
+        "days": [
+          "Martes",
+          "Jueves"
+        ],
+        "startTime": "18:00",
+        "endTime": "19:00",
+        "minAge": 14,
+        "maxAge": 99,
+        "prerequisiteLevel": null,
+        "cicloLectivo": "2026",
+        "fechaInicio": "2026-03-02",
+        "fechaFin": "2026-11-27",
+        "totalClases": 25,
+        "cicloIniciado": false,
+        "cicloFinalizado": false
+      },
+      {
+        "id": 7,
+        "name": "Pre First Certificate",
+        "level": "Pre First Certificate",
+        "minAge": 14,
+        "maxAge": 99,
         "capacity": 30,
         "schedule": "Lunes y miércoles 19:00 a 20:00",
         "inscripciones": [],
@@ -232,31 +357,30 @@
         "totalClases": 25,
         "cicloLectivo": "2026",
         "cicloIniciado": false,
-        "cicloFinalizado": false
+        "cicloFinalizado": false,
+        "teacherId": 10
       },
       {
-        "id": 7,
-        "name": "Adultos 2",
-        "level": "Adultos 2",
-        "minAge": 31,
-        "maxAge": 99,
+        "id": 41,
+        "name": "First Certificate",
+        "level": "First Certificate",
         "capacity": 30,
         "schedule": "Martes y jueves 19:00 a 20:00",
-        "inscripciones": [],
         "days": [
           "Martes",
           "Jueves"
         ],
         "startTime": "19:00",
         "endTime": "20:00",
+        "minAge": 14,
+        "maxAge": 99,
         "prerequisiteLevel": null,
+        "cicloLectivo": "2026",
         "fechaInicio": "2026-03-02",
         "fechaFin": "2026-11-27",
         "totalClases": 25,
-        "cicloLectivo": "2026",
         "cicloIniciado": false,
-        "cicloFinalizado": false,
-        "teacherId": 10
+        "cicloFinalizado": false
       }
     ],
     "inscripciones": [
@@ -266,7 +390,7 @@
         "cursoId": 4,
         "estado": "PENDIENTE",
         "fecha": "2026-10-27T21:59:12.574Z",
-        "level": "Adolescentes 1",
+        "level": "Fourth Grade",
         "passed": false,
         "fechaFinalizacion": null,
         "cicloLectivo": "2026",
@@ -282,7 +406,7 @@
         "cursoId": 6,
         "estado": "FINALIZADA",
         "fecha": "2026-10-27T22:25:52.516Z",
-        "level": "Adultos 1",
+        "level": "Fifth Year",
         "passed": true,
         "fechaFinalizacion": "2026-11-15T23:21:27.231Z",
         "cicloLectivo": "2026",
@@ -298,7 +422,7 @@
         "cursoId": 3,
         "estado": "CONFIRMADA",
         "fecha": "2026-11-03T17:34:46.656Z",
-        "level": "Inicial 2",
+        "level": "Second Grade",
         "passed": null,
         "fechaFinalizacion": null,
         "cicloLectivo": "2026",
@@ -314,7 +438,7 @@
         "cursoId": 6,
         "estado": "PENDIENTE",
         "fecha": "2026-11-16T00:38:24.086Z",
-        "level": "Adultos 1",
+        "level": "Fifth Year",
         "cicloLectivo": "2026",
         "passed": null,
         "fechaFinalizacion": null,
@@ -324,6 +448,19 @@
         "asistenciasPresentes": 0,
         "ausencias": 0,
         "totalClasesCiclo": 25
+      },
+      {
+        "id": 43,
+        "alumnoId": 42,
+        "cursoId": 5,
+        "estado": "PENDIENTE",
+        "fecha": "2026-11-17T23:01:42.363Z",
+        "level": "Third Year",
+        "cicloLectivo": "2026",
+        "passed": null,
+        "fechaFinalizacion": null,
+        "porcentajeAsistencia": null,
+        "desaprobadoPorFaltas": false
       }
     ],
     "calificaciones": [
@@ -472,133 +609,7 @@
         "fecha": "2026-11-16T00:56:29.784Z"
       }
     ],
-    "niveladorResultados": [
-      {
-        "id": 22,
-        "nombre": "Carlos",
-        "email": "carlos@test.com",
-        "respuestas": [
-          {
-            "preguntaId": 1,
-            "opcion": 0
-          },
-          {
-            "preguntaId": 2,
-            "opcion": 0
-          },
-          {
-            "preguntaId": 3,
-            "opcion": 1
-          }
-        ],
-        "puntaje": 3,
-        "nivelSugerido": "Inicial 1",
-        "fecha": "2026-11-15T22:18:26.417Z"
-      },
-      {
-        "id": 25,
-        "nombre": "Carlos",
-        "email": "carlos@test.com",
-        "respuestas": [
-          {
-            "preguntaId": 1,
-            "opcion": 0
-          },
-          {
-            "preguntaId": 2,
-            "opcion": 0
-          },
-          {
-            "preguntaId": 3,
-            "opcion": 1
-          }
-        ],
-        "puntaje": 3,
-        "nivelSugerido": "Inicial 1",
-        "fecha": "2026-11-15T22:19:02.610Z"
-      },
-      {
-        "id": 27,
-        "nombre": "Carlos",
-        "email": "carlos@test.com",
-        "respuestas": [
-          {
-            "preguntaId": 1,
-            "opcion": 0
-          },
-          {
-            "preguntaId": 2,
-            "opcion": 0
-          },
-          {
-            "preguntaId": 3,
-            "opcion": 1
-          }
-        ],
-        "puntaje": 3,
-        "nivelSugerido": "Inicial 1",
-        "fecha": "2026-11-15T22:19:37.345Z"
-      },
-      {
-        "id": 29,
-        "nombre": "abril mia tedesco",
-        "email": "aabyted@gmail.com",
-        "respuestas": [
-          {
-            "preguntaId": 1,
-            "opcion": 0
-          },
-          {
-            "preguntaId": 2,
-            "opcion": 0
-          },
-          {
-            "preguntaId": 3,
-            "opcion": 1
-          },
-          {
-            "preguntaId": 4,
-            "opcion": 0
-          },
-          {
-            "preguntaId": 5,
-            "opcion": 1
-          },
-          {
-            "preguntaId": 6,
-            "opcion": 0
-          },
-          {
-            "preguntaId": 7,
-            "opcion": 1
-          },
-          {
-            "preguntaId": 8,
-            "opcion": 0
-          },
-          {
-            "preguntaId": 9,
-            "opcion": 1
-          },
-          {
-            "preguntaId": 10,
-            "opcion": 1
-          },
-          {
-            "preguntaId": 11,
-            "opcion": 1
-          },
-          {
-            "preguntaId": 12,
-            "opcion": 2
-          }
-        ],
-        "puntaje": 27,
-        "nivelSugerido": "Adultos 2",
-        "fecha": "2026-11-15T23:16:13.980Z"
-      }
-    ],
     "pagosDocentes": []
   },
-  "nextId": 37
+  "nextId": 44
 }

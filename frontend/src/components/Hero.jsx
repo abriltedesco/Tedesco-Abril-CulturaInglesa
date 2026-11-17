@@ -1,76 +1,100 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import heroImg from '../assets/hero.jpg';
 
+const LINES = ['MÁS INGLÉS,', 'MÁS OPORTUNIDADES'];
+const FULL_TEXT = LINES.join('\n');
+
+// Escribe el texto caracter por caracter, como si se estuviera tipeando
+const useTypewriter = (text, { startDelay = 500, speed = 70 } = {}) => {
+  const reduceMotion =
+    typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const [count, setCount] = useState(reduceMotion ? text.length : 0);
+
+  useEffect(() => {
+    if (reduceMotion) return undefined;
+    let interval;
+    const start = setTimeout(() => {
+      interval = setInterval(() => {
+        setCount((c) => {
+          if (c >= text.length) {
+            clearInterval(interval);
+            return c;
+          }
+          return c + 1;
+        });
+      }, speed);
+    }, startDelay);
+    return () => {
+      clearTimeout(start);
+      clearInterval(interval);
+    };
+  }, [text, startDelay, speed, reduceMotion]);
+
+  return count;
+};
+
 export const Hero = () => {
+  const count = useTypewriter(FULL_TEXT);
+  const typed = FULL_TEXT.slice(0, count);
+  const [first, second = ''] = typed.split('\n');
+
   return (
     <section
       aria-label="Presentación principal"
       style={{
         position: 'relative',
-        height: '75vh',
-        minHeight: '480px',
-        maxHeight: '650px',
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.55)), url(${heroImg})`,
+        minHeight: '88vh',
+        maxHeight: '780px',
+        backgroundImage: `linear-gradient(rgba(39, 60, 44, 0.78), rgba(39, 60, 44, 0.78)), url(${heroImg})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
-        color: '#FFFFFF',
-        textAlign: 'center',
-        padding: '0 20px',
+        color: '#FEF7ED',
+        overflow: 'hidden',
       }}
     >
-      <div
-        style={{
-          maxWidth: '850px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '28px',
-        }}
-      >
+      <div className="container" style={{ width: '100%', position: 'relative', zIndex: 1, textAlign: 'center' }}>
         <h1
+          aria-label="Más inglés, más oportunidades"
           style={{
             fontFamily: 'var(--font-sans)',
-            fontSize: 'clamp(2.4rem, 5vw, 4rem)',
-            fontWeight: 800,
-            color: '#FFFFFF',
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
-            lineHeight: 1.15,
-            textShadow: '0 3px 12px rgba(0,0,0,0.6)',
+            fontSize: 'clamp(2.2rem, 6.4vw, 5rem)',
+            fontWeight: 700,
+            color: '#FEF7ED',
+            lineHeight: 1.08,
+            letterSpacing: '-1px',
+            minHeight: '2.2em',
+            marginBottom: '34px',
           }}
         >
-          MÁS INGLES,<br />
-          MÁS OPORTUNIDADES
+          <span aria-hidden="true">
+            <span style={{ display: 'block' }}>{first}</span>
+            <span style={{ display: 'block' }}>
+              {second}
+              <span className="typewriter-caret" />
+            </span>
+          </span>
         </h1>
 
-        <a
-          href="#contacto"
+        <p
+          className="hero-fade"
           style={{
-            backgroundColor: '#1F3A60',
-            color: '#FFFFFF',
-            padding: '14px 44px',
-            borderRadius: '12px',
-            fontSize: '1.05rem',
-            fontWeight: 700,
-            textDecoration: 'none',
-            boxShadow: '0 6px 20px rgba(0,0,0,0.25)',
-            transition: 'all 0.25s ease',
-            display: 'inline-block',
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.backgroundColor = '#172D4C';
-            e.target.style.transform = 'translateY(-2px)';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.backgroundColor = '#1F3A60';
-            e.target.style.transform = 'translateY(0)';
+            animationDelay: '2.6s',
+            maxWidth: '520px',
+            margin: '0 auto 38px',
+            fontSize: '1.1rem',
+            lineHeight: 1.7,
+            color: 'rgba(254, 247, 237, 0.85)',
           }}
         >
-          Contactános
-        </a>
+          Clases presenciales en grupos reducidos, desde los primeros pasos hasta los exámenes internacionales.
+        </p>
+
+        <div className="hero-fade" style={{ animationDelay: '3s', display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <a href="#contacto" className="hero-btn hero-btn-primary">Contactanos</a>
+          <a href="#cursos" className="hero-btn hero-btn-ghost">Ver cursos ↓</a>
+        </div>
       </div>
     </section>
   );

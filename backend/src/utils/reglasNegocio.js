@@ -19,6 +19,15 @@ export const assertMinimumAge = (dateOfBirth) => {
     if (age < 4) throw new BadRequestError('El alumno debe tener al menos 4 años.');
 };
 
+export const isUnderage = (dateOfBirth) => {
+    const dob = new Date(dateOfBirth);
+    if (Number.isNaN(dob.getTime())) return false;
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    if (today < new Date(today.getFullYear(), dob.getMonth(), dob.getDate())) age--;
+    return age < 18;
+};
+
 export const assertUnique = (items, field, value, message) => {
     if (items.some((item) => String(item[field]).toLowerCase() === String(value).toLowerCase())) throw new ConflictError(message);
 };

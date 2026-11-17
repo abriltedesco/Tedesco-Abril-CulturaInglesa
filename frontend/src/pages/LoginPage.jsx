@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import logoImg from '../assets/logo.jpg';
 import { authService } from '../services/authService';
-import { ArrowLeft } from 'lucide-react';
 
 export const LoginPage = ({ onLogin, onBack }) => {
   const [email, setEmail] = useState('');
@@ -175,7 +174,7 @@ export const LoginPage = ({ onLogin, onBack }) => {
             cursor: 'pointer',
           }}
         >
-          <ArrowLeft size={16} /> Volver a la página principal
+          Volver a la página principal
         </button>
       </div>
     </main>

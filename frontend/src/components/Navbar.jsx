@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import logoImg from '../assets/logo.jpg';
-import { Menu, X, LogIn } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 export const Navbar = ({ onOpenLogin }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -8,8 +8,8 @@ export const Navbar = ({ onOpenLogin }) => {
   const navLinks = [
     { name: 'CURSOS', href: '#cursos' },
     { name: 'SOBRE NOSOTROS', href: '#sobre-nosotros' },
-    { name: 'TEST NIVELADOR', href: '#test-nivelador' },
     { name: 'PREGUNTAS', href: '#preguntas-frecuentes' },
+    { name: 'GALERÍA', href: '#galeria' },
     { name: 'CONTACTO', href: '#contacto' },
   ];
 
@@ -131,7 +131,6 @@ export const Navbar = ({ onOpenLogin }) => {
                 }}
                 aria-label="Abrir gestión de alumnos"
               >
-                <LogIn size={15} />
                 INGRESAR
               </button>
             </li>
@@ -207,7 +206,6 @@ export const Navbar = ({ onOpenLogin }) => {
                   gap: '8px',
                 }}
               >
-                <LogIn size={18} />
                 INGRESAR
               </button>
             </li>

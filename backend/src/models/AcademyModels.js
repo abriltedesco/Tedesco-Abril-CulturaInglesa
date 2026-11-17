@@ -79,15 +79,3 @@ export class Contacto {
         this.fecha = new Date().toISOString();
     }
 }
-
-export class NiveladorRespuesta {
-    constructor(id, data) {
-        this.id = id;
-        this.nombre = data.nombre || '';
-        this.email = data.email || '';
-        this.respuestas = data.respuestas || [];
-        this.puntaje = data.puntaje || 0;
-        this.nivelSugerido = data.nivelSugerido || '';
-        this.fecha = new Date().toISOString();
-    }
-}
